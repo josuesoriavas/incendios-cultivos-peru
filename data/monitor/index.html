@@ -133,7 +133,7 @@
         <dt>Imágenes</dt><dd>Sentinel-2 L2A (Earth Search, tile 18LYK), elegidas por el % de píxeles válidos dentro de la zona según la capa SCL. Previa: <span data-source="resumen" data-field="cur_antes">—</span> (<span data-source="resumen" data-field="cur_valido_antes">—</span> % válido); posterior: <span data-source="resumen" data-field="cur_despues">—</span> (<span data-source="resumen" data-field="cur_valido_despues">—</span> %).</dd>
         <dt>Quemado</dt><dd>NBR = (B8A − B12)/(B8A + B12); dNBR = NBR antes − NBR después. Cuenta cada mancha continua de dNBR ≥ 0,10 que toca un píxel a 1 km o menos de un foco VIIRS; el umbral del visor se aplica dentro de esa mancha. Se excluyen nubes, sombras y agua (SCL y MNDWI).</dd>
         <dt>Superficie agrícola</dt><dd>Superficie Agrícola Nacional 2024 del MIDAGRI, rasterizada a la grilla de 20 m. Incluye tierras en descanso, no solo cultivo en pie.</dd>
-        <dt>Dinámica agrícola</dt><dd>Regla de la app Dinámica Agrícola del MIDAGRI sobre el NDVI máximo mensual de octubre 2025 a septiembre 2026: barbecho si el máximo ≤ 0,3; permanente si el mínimo > 0,3; transitorio en el resto; al menos 3 meses válidos. "Permanente" también incluye monte siempre verde.</dd>
+        <dt>Dinámica agrícola</dt><dd>Regla de la app Dinámica Agrícola del MIDAGRI sobre el NDVI máximo mensual de octubre 2025 a septiembre 2026: barbecho si el máximo ≤ 0,3; permanente si el mínimo > 0,3; transitorio en el resto; al menos 3 meses válidos. Aquí "permanente" solo significa siempre verde, no cultivo permanente: lo quemado con esa clase está entre 2 000 y 3 400 m, WorldCover lo ve como pastizal o bosque, y la mitad apenas supera el umbral (NDVI mínimo de 0,35).</dd>
         <dt>Distancia</dt><dd>Euclidiana, al píxel quemado más cercano, dentro del recuadro de 24 × 19 km: el anillo de 5 km llega al borde, así que es un mínimo.</dd>
         <dt>Limitaciones</dt><dd>La imagen previa es 16 días anterior al fuego y el secado puede inflar el dNBR bajo; WorldCover es de 2021; las nubes ocultan el <span data-source="resumen" data-field="cur_sin_dato_pct">—</span> % de la zona.</dd>
       </dl>
@@ -181,12 +181,12 @@
     90: ["Humedal", [0, 150, 160]], 95: ["Manglar", [0, 207, 117]], 100: ["Musgo", [250, 230, 160]] };
   var SEVN = ["Baja", "Moderada baja", "Moderada alta", "Alta"], SEV = [[253, 212, 158], [252, 141, 89], [215, 48, 31], [127, 0, 0]], CORTES = [0.27, 0.44, 0.66];
   var DINN = ["Sin dato", "Barbecho", "Transitorio", "Permanente"], DIN = [[138, 138, 138], [217, 160, 91], [76, 120, 200], [46, 139, 87]], DIN_ORDEN = [3, 2, 1, 0];
-  var DIN_EXPLICA = ["sin dato", "barbecho (nunca verde en el año)", "transitorio (verde solo parte del año)", "permanente (siempre verde: frutales, pastos con riego o monte)"];
+  var DIN_EXPLICA = ["sin dato", "barbecho (nunca verde en el año)", "transitorio (verde solo parte del año)", "permanente: vegetación que no se seca en todo el año, sobre todo pasto, matorral o árboles del fondo del valle"];
   var ANILLOS = [["Quemada", 0, [215, 38, 61]], ["0–500 m", 500, [255, 95, 30]], ["500 m–1 km", 1000, [255, 150, 40]], ["1–2 km", 2000, [255, 205, 70]], ["2–5 km", 5000, [255, 240, 160]]];
   var RAMPA = [[26, 152, 80], [145, 207, 96], [255, 255, 191], [253, 174, 97], [215, 48, 31], [127, 0, 0]];
   var NOTAS = {
     agri: "Rojo: superficie agrícola del MIDAGRI que se quemó. Naranja: quemado fuera de ella. Verde: superficie agrícola sin quemar.",
-    din: "Superficie agrícola según su NDVI en los 12 meses previos al fuego (regla Dinámica Agrícola del MIDAGRI). Tono intenso: se quemó.",
+    din: "Superficie agrícola según su NDVI en los 12 meses previos al fuego (regla Dinámica Agrícola del MIDAGRI). Permanente = siempre verde, no necesariamente cultivo. Tono intenso: se quemó.",
     dist: "Superficie agrícola coloreada por su distancia euclidiana al píxel quemado más cercano.",
     wc: "Clases de ESA WorldCover 2021; lo quemado se ve brillante. Compárala con la capa Quemado × agrícola.",
     sev: "Severidad del dNBR dentro del área quemada (Key y Benson, 2006).",
