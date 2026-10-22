@@ -1,0 +1,41 @@
+{
+  "meses": [
+    "2025-10",
+    "2025-11",
+    "2025-12",
+    "2026-01",
+    "2026-02",
+    "2026-03",
+    "2026-04",
+    "2026-05",
+    "2026-06",
+    "2026-07",
+    "2026-08",
+    "2026-09"
+  ],
+  "escenas": 131,
+  "agricola_en_el_recuadro": {
+    "sin dato": 0,
+    "barbecho": 73,
+    "transitorio": 2423,
+    "permanente": 2604
+  },
+  "agricola_quemada": {
+    "sin dato": 0,
+    "barbecho": 0,
+    "transitorio": 40,
+    "permanente": 79
+  },
+  "agricola_sin_quemar_a_1km": {
+    "sin dato": 0,
+    "barbecho": 41,
+    "transitorio": 477,
+    "permanente": 916
+  },
+  "agricola_sin_quemar_1_a_5km": {
+    "sin dato": 0,
+    "barbecho": 32,
+    "transitorio": 1675,
+    "permanente": 1376
+  }
+}

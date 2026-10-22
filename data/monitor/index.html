@@ -1,135 +1,171 @@
 <style>
-.mo{display:flex;flex-direction:column;gap:22px;font-family:var(--font-anthropic-sans)}
-.mo h2{font-size:22px;margin:0;text-wrap:balance;line-height:1.25}
-.mo h3{font-size:12.5px;margin:0;text-transform:uppercase;letter-spacing:.06em;color:var(--color-fg-muted);font-weight:600}
-.mo h4{font-size:14px;margin:0;font-weight:600}
-.mo .sub{color:var(--color-fg-muted);font-size:13px;margin:0;line-height:1.5;max-width:90ch}
-.mo .tabs{display:flex;gap:4px;border-bottom:1px solid var(--color-border-line);flex-wrap:wrap}
-.mo .tabs button{font:inherit;font-size:14px;padding:9px 14px;border:0;border-bottom:2px solid transparent;background:none;color:var(--color-fg-muted);cursor:pointer;margin-bottom:-1px}
-.mo .tabs button[aria-selected="true"]{color:var(--color-fg);border-bottom-color:var(--color-bad);font-weight:600}
-.mo .tabs button:focus-visible,.mo .capas button:focus-visible,.mo input:focus-visible{outline:2px solid var(--color-bad);outline-offset:2px}
-.mo .pag{display:flex;flex-direction:column;gap:22px}
-.mo .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
-.mo .kpi{border:1px solid var(--color-border-line);border-radius:10px;padding:14px 16px;background:var(--color-panel);display:flex;flex-direction:column;gap:6px;min-width:0}
-.mo .kpi .v{font-family:var(--font-anthropic-serif);font-size:32px;line-height:1.1;font-variant-numeric:tabular-nums}
-.mo .kpi .l{font-size:13px;color:var(--color-fg-muted);line-height:1.4}
-.mo .kpi.hot{border-color:var(--color-bad)}
-.mo .kpi.hot .v{color:var(--color-bad)}
-.mo .kpi.ok .v{color:var(--color-ok)}
-.mo .visor{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:16px;align-items:start}
-@media (max-width:900px){.mo .visor{grid-template-columns:minmax(0,1fr)}}
-.mo .lienzo{position:relative;border:1px solid var(--color-border-line);border-radius:10px;overflow:hidden;background:#151515;line-height:0}
-.mo .lienzo canvas{width:100%;height:auto;display:block;cursor:crosshair}
-.mo [hidden]{display:none!important}
-.mo .cargando{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#ddd;font-size:14px;line-height:1.4;pointer-events:none}
-.mo .lect{position:absolute;left:0;top:0;background:rgba(15,15,15,.88);color:#f2f2f2;border-radius:8px;padding:7px 10px;font-size:12px;line-height:1.5;pointer-events:none;font-variant-numeric:tabular-nums;white-space:pre-line;max-width:240px;z-index:3}
-.mo .escala{position:absolute;right:10px;top:10px;background:rgba(15,15,15,.85);color:#f2f2f2;border-radius:6px;padding:4px 8px;font-size:11px;line-height:1.4;pointer-events:none}
-.mo .panel{display:flex;flex-direction:column;gap:14px;min-width:0}
-.mo .capas{display:flex;flex-direction:column;gap:5px}
-.mo .capas button{font:inherit;font-size:13px;text-align:left;padding:7px 10px;border-radius:8px;border:1px solid var(--color-border-line);background:var(--color-bg);color:var(--color-fg);cursor:pointer}
-.mo .capas button[aria-pressed="true"]{background:var(--color-fg);color:var(--color-bg);border-color:var(--color-fg)}
-.mo .ctl{display:flex;flex-direction:column;gap:4px}
-.mo .ctl label{font-size:13px;display:flex;justify-content:space-between;gap:8px}
-.mo .ctl input[type=range]{width:100%}
-.mo .ctl small{font-size:11.5px;color:var(--color-fg-muted);line-height:1.35}
-.mo .ley{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--color-fg-muted)}
-.mo .ley i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-2px}
-.mo .rampa{height:10px;border-radius:3px;background:linear-gradient(90deg,#1a9850,#91cf60,#ffffbf,#fdae61,#d73027,#7f0000)}
-.mo .graf{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
-.mo .graf > div{border:1px solid var(--color-border-line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;min-width:0}
-.mo .graf .bar{width:100%}
-.mo .tip{position:absolute;pointer-events:none;background:var(--color-bg);border:1px solid var(--color-border-line);border-radius:8px;padding:8px 10px;font-size:12.5px;box-shadow:0 4px 14px rgba(0,0,0,.15);max-width:260px;line-height:1.45;z-index:2}
-.mo .mapwrap{position:relative}
-.mo .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--color-fg-muted)}
-.mo .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
-.mo .note{font-size:13px;line-height:1.55;max-width:85ch;color:var(--color-fg-muted)}
-.mo .note ul{margin:4px 0 0;padding-left:18px}
-.mo .note li{margin-bottom:3px}
-.mo .note b{color:var(--color-fg)}
+/* Monitor de quema × superficie agrícola. Un hallazgo arriba, el raster como protagonista, tarjetas para los cruces. */
+.cu{--c-quem-agri:#d7263d;--c-quem:#f28f3b;--c-agri:#3fa34d;--c-perm:#2e8b57;--c-trans:#4c78c8;--c-barb:#d9a05b;--c-sd:#8a8a8a;
+  display:flex;flex-direction:column;gap:var(--cds-gap-xl);font-family:var(--font-anthropic-sans);max-width:1240px;margin-inline:auto}
+.cu [hidden]{display:none!important}
+.cu b{font-weight:600}
+.cu-tabs{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--color-border-line);border-radius:999px;align-self:flex-start;background:var(--color-panel);flex-wrap:wrap}
+.cu-tabs button{font:inherit;font-size:var(--cds-font-size-body);padding:6px 16px;border:0;border-radius:999px;background:none;color:var(--color-fg-muted);cursor:pointer}
+.cu-tabs button[aria-selected="true"]{background:var(--color-fg);color:var(--color-bg)}
+.cu button:focus-visible,.cu input:focus-visible,.cu summary:focus-visible{outline:2px solid var(--cds-chart-status-critical);outline-offset:2px}
+.cu-pag{display:flex;flex-direction:column;gap:var(--cds-gap-xl)}
+.cu-head{display:flex;flex-direction:column;gap:var(--cds-gap-sm);max-width:78ch}
+.cu-eyebrow{margin:0;font-size:var(--cds-font-size-caption);letter-spacing:.08em;text-transform:uppercase;color:var(--color-fg-muted)}
+.cu-title{margin:0;font-family:var(--font-anthropic-serif);font-weight:400;font-size:clamp(1.9rem,3.4vw,2.7rem);line-height:1.1;text-wrap:balance}
+.cu-lede{margin:0;font-size:1.12rem;line-height:1.55;color:var(--color-fg);text-wrap:pretty}
+.cu-lede b{font-variant-numeric:tabular-nums}
+.cu-lede .x{color:var(--cds-chart-status-critical)}
+.cu-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));border-top:1px solid var(--color-border-line);border-bottom:1px solid var(--color-border-line)}
+.cu-stat{display:flex;flex-direction:column;gap:4px;padding:var(--cds-pad-md) var(--cds-pad-md) var(--cds-pad-md) 0;min-width:0}
+.cu-stat + .cu-stat{padding-left:var(--cds-pad-md);border-left:1px solid var(--color-border-line)}
+.cu-k{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);letter-spacing:.02em}
+.cu-v{font-family:var(--font-anthropic-serif);font-weight:400;font-size:2.3rem;line-height:1.05;font-variant-numeric:tabular-nums}
+.cu-v small{font-family:var(--font-anthropic-sans);font-size:var(--cds-font-size-body);color:var(--color-fg-muted)}
+.cu-stat.hot .cu-v{color:var(--cds-chart-status-critical)}
+.cu-n{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);line-height:1.35}
+.cu-card{background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:var(--cds-radius);padding:var(--cds-pad-lg);display:flex;flex-direction:column;gap:var(--cds-gap-sm);min-width:0}
+.cu-card h2{margin:0;font-size:var(--cds-font-size-heading);font-weight:var(--cds-font-weight-medium);text-wrap:balance}
+.cu-nota{margin:0;font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);line-height:1.45;max-width:90ch}
+.cu-toolbar{display:flex;flex-wrap:wrap;gap:var(--cds-gap-md);align-items:center;justify-content:space-between}
+.cu-seg{display:flex;flex-wrap:wrap;gap:6px}
+.cu-seg button{font:inherit;font-size:var(--cds-font-size-caption);padding:6px 11px;border-radius:999px;border:1px solid var(--color-border-line);background:var(--color-bg);color:var(--color-fg);cursor:pointer;white-space:nowrap}
+.cu-seg button[aria-pressed="true"]{background:var(--color-fg);color:var(--color-bg);border-color:var(--color-fg)}
+.cu-seg .sep{width:1px;background:var(--color-border-line);margin:2px 4px}
+.cu-umbral{display:flex;align-items:center;gap:10px;font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);min-width:min(100%,260px)}
+.cu-umbral input{flex:1;accent-color:var(--cds-chart-status-critical)}
+.cu-umbral b{color:var(--color-fg);font-variant-numeric:tabular-nums;min-width:2.6em;text-align:right}
+.cu-lienzo{position:relative;border-radius:calc(var(--cds-radius) - 2px);overflow:hidden;background:#161616;line-height:0}
+.cu-lienzo canvas{width:100%;height:auto;display:block;cursor:crosshair;touch-action:pan-y}
+.cu-cargando{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#ddd;font-size:14px;line-height:1.4;pointer-events:none}
+.cu-lect{position:absolute;left:0;top:0;z-index:3;pointer-events:none;background:var(--cds-surface-popover);color:var(--color-fg);border:1px solid var(--cds-border);border-radius:var(--cds-radius);box-shadow:var(--cds-shadow-popover);padding:var(--cds-pad-xs) var(--cds-pad-sm);font-size:var(--cds-font-size-caption);line-height:1.5;white-space:pre-line;max-width:250px;font-variant-numeric:tabular-nums}
+.cu-escala{position:absolute;right:10px;top:10px;background:rgba(12,12,12,.78);color:#f2f2f2;border-radius:6px;padding:4px 8px;font-size:11px;line-height:1.4;pointer-events:none}
+.cu-ley{position:absolute;left:10px;bottom:10px;max-width:calc(100% - 20px);display:flex;flex-wrap:wrap;gap:4px 12px;background:rgba(12,12,12,.78);color:#f2f2f2;border-radius:8px;padding:7px 10px;font-size:11.5px;line-height:1.4;pointer-events:none}
+.cu-ley i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.cu-ley .rampa{display:inline-block;width:120px;height:9px;border-radius:2px;vertical-align:-1px;margin:0 6px;background:linear-gradient(90deg,#1a9850,#91cf60,#ffffbf,#fdae61,#d73027,#7f0000)}
+.cu-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr));gap:var(--cds-gap-md)}
+.cu-grid .ancho{grid-column:1 / -1}
+.cu-grid svg{width:100%;display:block;overflow:visible}
+.cu-mini{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.cu-mini i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.cu-valid{display:flex;gap:var(--cds-gap-sm);align-items:baseline;font-size:var(--cds-font-size-body);color:var(--color-fg-muted);border-left:3px solid var(--color-ok);padding:2px 0 2px var(--cds-pad-sm);margin:0;max-width:90ch}
+.cu-valid b{color:var(--color-fg)}
+.cu-metodo{border-top:1px solid var(--color-border-line);padding-top:var(--cds-pad-md);font-size:var(--cds-font-size-body);color:var(--color-fg-muted);line-height:1.55}
+.cu-metodo summary{cursor:pointer;color:var(--color-fg);font-weight:var(--cds-font-weight-medium)}
+.cu-metodo dl{display:grid;grid-template-columns:minmax(0,11rem) minmax(0,1fr);gap:6px var(--cds-gap-md);margin:var(--cds-gap-md) 0 0;max-width:100ch}
+.cu-metodo dt{color:var(--color-fg);font-weight:var(--cds-font-weight-medium)}
+.cu-metodo dd{margin:0}
+@media (max-width:640px){.cu-metodo dl{grid-template-columns:minmax(0,1fr)}.cu-stat + .cu-stat{border-left:0;padding-left:0;border-top:1px solid var(--color-border-line)}}
+.cu-mapa{position:relative}
+.cu-tip{position:absolute;pointer-events:none;z-index:2;background:var(--cds-surface-popover);border:1px solid var(--cds-border);border-radius:var(--cds-radius);box-shadow:var(--cds-shadow-popover);padding:var(--cds-pad-xs) var(--cds-pad-sm);font-size:var(--cds-font-size-caption);line-height:1.5;max-width:260px}
+.cu-tip b{display:block}
+.cu-tip span{display:block;color:var(--cds-text-secondary)}
+@media (prefers-reduced-motion:no-preference){.cu-pag{animation:cu-in var(--cds-dur-slow) var(--cds-ease-out)}@keyframes cu-in{from{opacity:.4}to{opacity:1}}}
 </style>
-<div class="mo">
-  <div class="tabs" role="tablist" aria-label="Páginas">
-    <button type="button" role="tab" id="tab-curahuasi" data-pag="curahuasi" aria-selected="true">Curahuasi: quema × superficie agrícola</button>
+<div class="cu">
+  <div class="cu-tabs" role="tablist" aria-label="Páginas">
+    <button type="button" role="tab" id="tab-curahuasi" data-pag="curahuasi" aria-selected="true">Curahuasi</button>
     <button type="button" role="tab" id="tab-nacional" data-pag="nacional" aria-selected="false">Contexto nacional</button>
   </div>
 
-  <div class="pag" id="curahuasi" role="tabpanel" aria-labelledby="tab-curahuasi">
-    <header style="display:flex;flex-direction:column;gap:6px">
-      <h3>Curahuasi · Abancay · Apurímac · octubre 2026</h3>
-      <h2 id="titulo">¿Cuánta superficie agrícola quemó el incendio y cuánta tiene al lado?</h2>
-      <p class="sub">Cruce píxel a píxel (20 m) del área quemada medida con Sentinel-2 y la Superficie Agrícola Nacional 2024 del MIDAGRI, comparado con lo que ve ESA WorldCover. Imagen previa <span data-source="resumen" data-field="cur_antes">—</span> (<span data-source="resumen" data-field="cur_valido_antes">—</span> % válido en la zona), posterior <span data-source="resumen" data-field="cur_despues">—</span> (<span data-source="resumen" data-field="cur_valido_despues">—</span> % válido). Las cifras de abajo cambian con el umbral del visor.</p>
+  <div class="cu-pag" id="curahuasi" role="tabpanel" aria-labelledby="tab-curahuasi">
+    <header class="cu-head">
+      <p class="cu-eyebrow">Curahuasi · Abancay · Apurímac · Sentinel-2 del <span data-source="resumen" data-field="cur_antes">—</span> y el <span data-source="resumen" data-field="cur_despues">—</span></p>
+      <h1 class="cu-title" id="titulo">Quema y superficie agrícola en Curahuasi</h1>
+      <p class="cu-lede" id="hallazgo" data-source="raster">El fuego quemó <b id="l-quem">—</b> ha. De ellas, <b class="x" id="l-agri">—</b> ha eran superficie agrícola del MIDAGRI, y WorldCover solo reconoce <b id="l-wc">—</b> ha como cultivo. Otras <b class="x" id="l-1km">—</b> ha agrícolas quedaron a menos de 1 km de la cicatriz.<span id="l-din"></span></p>
     </header>
 
-    <div class="kpis" id="cifras-cruce" data-source="raster">
-      <div class="kpi"><span class="v"><span id="k-quem">—</span> ha</span><span class="l">quemadas con dNBR ≥ <span class="k-umbral">0,10</span></span></div>
-      <div class="kpi hot"><span class="v"><span id="k-agri">—</span> ha</span><span class="l">de superficie agrícola quemada (MIDAGRI): el <span id="k-agri-pct">—</span> % del área quemada</span></div>
-      <div class="kpi"><span class="v"><span id="k-wc">—</span> ha</span><span class="l">de "Cultivo" quemado según WorldCover: <span id="k-veces">—</span> veces menos que el MIDAGRI</span></div>
-      <div class="kpi hot"><span class="v"><span id="k-1km">—</span> ha</span><span class="l">agrícolas sin quemar a 1 km o menos de la cicatriz: la primera franja expuesta</span></div>
+    <div class="cu-stats" id="cifras-cruce" data-source="raster">
+      <div class="cu-stat"><span class="cu-k">Área quemada</span><span class="cu-v"><span id="k-quem">—</span> <small>ha</small></span><span class="cu-n">dNBR ≥ <span class="k-umbral">0,10</span>, sembrado con focos VIIRS</span></div>
+      <div class="cu-stat hot"><span class="cu-k">Superficie agrícola quemada</span><span class="cu-v"><span id="k-agri">—</span> <small>ha</small></span><span class="cu-n"><span id="k-agri-pct">—</span> % del área quemada · SAN 2024</span></div>
+      <div class="cu-stat"><span class="cu-k">"Cultivo" quemado según WorldCover</span><span class="cu-v"><span id="k-wc">—</span> <small>ha</small></span><span class="cu-n"><span id="k-veces">—</span> veces menos que el MIDAGRI</span></div>
+      <div class="cu-stat hot"><span class="cu-k">Agrícola sin quemar a ≤ 1 km</span><span class="cu-v"><span id="k-1km">—</span> <small>ha</small></span><span class="cu-n">la primera franja expuesta</span></div>
     </div>
 
-    <section class="visor" id="visor" data-source="raster color">
-      <div class="lienzo">
-        <canvas id="cv" aria-label="Raster de Curahuasi"></canvas>
-        <div class="cargando" id="cargando">Cargando 1,1 millones de píxeles…</div>
-        <div class="lect" id="lect" hidden></div>
-        <div class="escala">Píxel de 20 m · recuadro de <span id="ancho-km">—</span> km</div>
-      </div>
-      <div class="panel">
-        <div class="capas" role="group" aria-label="Capa del visor">
-          <button type="button" data-capa="agri" aria-pressed="true">Quemado × superficie agrícola</button>
-          <button type="button" data-capa="dist" aria-pressed="false">Superficie agrícola por distancia</button>
-          <button type="button" data-capa="wc" aria-pressed="false">Lo que ve WorldCover</button>
+    <section class="cu-card" id="visor" data-source="raster color">
+      <div class="cu-toolbar">
+        <div class="cu-seg" role="group" aria-label="Capa del visor">
+          <button type="button" data-capa="agri" aria-pressed="true">Quemado × agrícola</button>
+          <button type="button" data-capa="din" aria-pressed="false">Dinámica agrícola</button>
+          <button type="button" data-capa="dist" aria-pressed="false">Distancia a la cicatriz</button>
+          <button type="button" data-capa="wc" aria-pressed="false">WorldCover</button>
           <button type="button" data-capa="sev" aria-pressed="false">Severidad</button>
           <button type="button" data-capa="dnbr" aria-pressed="false">dNBR</button>
-          <button type="button" data-capa="antes" aria-pressed="false">Color real, antes</button>
-          <button type="button" data-capa="despues" aria-pressed="false">Color real, después</button>
+          <span class="sep" aria-hidden="true"></span>
+          <button type="button" data-capa="antes" aria-pressed="false">Antes</button>
+          <button type="button" data-capa="despues" aria-pressed="false">Después</button>
         </div>
-        <div class="ctl">
-          <label for="umbral"><span>Umbral de quemado (dNBR)</span><b class="k-umbral">0,10</b></label>
-          <input type="range" id="umbral" min="0.05" max="0.5" step="0.01" value="0.10">
-          <small>0,10 = quema baja; 0,27 = quema moderada baja (Key y Benson 2006).</small>
-        </div>
-        <div class="ley" id="ley"></div>
+        <div class="cu-umbral"><label for="umbral">Umbral dNBR</label><input type="range" id="umbral" min="0.05" max="0.5" step="0.01" value="0.10"><b class="k-umbral">0,10</b></div>
       </div>
+      <div class="cu-lienzo">
+        <canvas id="cv" aria-label="Raster de Curahuasi a 20 m"></canvas>
+        <div class="cu-cargando" id="cargando">Cargando 1,1 millones de píxeles…</div>
+        <div class="cu-lect" id="lect" hidden></div>
+        <div class="cu-escala">20 m por píxel · <span id="ancho-km">—</span> km</div>
+        <div class="cu-ley" id="ley"></div>
+      </div>
+      <p class="cu-nota" id="nota-capa"></p>
     </section>
 
-    <section class="graf" id="graficos" data-source="raster">
-      <div id="g-dist"><h4>Superficie agrícola según su distancia a la cicatriz (ha)</h4><svg class="bar" id="svg-dist"></svg></div>
-      <div id="g-wc"><h4>Cómo clasifica WorldCover la superficie agrícola quemada (ha)</h4><svg class="bar" id="svg-wc"></svg></div>
-      <div id="g-sev"><h4>Severidad del fuego en la superficie agrícola quemada (ha)</h4><svg class="bar" id="svg-sev"></svg></div>
-    </section>
-
-    <div class="kpis" id="validacion">
-      <div class="kpi ok"><span class="v"><span data-source="resumen" data-field="cur_dif_ref_pct">—</span> %</span><span class="l">de diferencia con una medición independiente del mismo incendio al umbral 0,27 (<span data-source="resumen" data-field="cur_quemado_027_ha">—</span> ha frente a <span data-source="resumen" data-field="ref_027_ha">—</span> ha, imágenes del 5 y 17 oct): el método está validado</span></div>
+    <div class="cu-grid">
+      <section class="cu-card ancho" id="g-dist" data-source="raster">
+        <h2>Superficie agrícola según su distancia a la cicatriz</h2>
+        <p class="cu-nota" id="nota-dist">Hectáreas de la SAN 2024 en cada franja, divididas por su dinámica en los 12 meses previos al fuego.</p>
+        <svg id="svg-dist" role="img" aria-label="Barras apiladas por distancia y dinámica"></svg>
+        <div class="cu-mini" id="mini-din"></div>
+      </section>
+      <section class="cu-card" id="g-wc" data-source="raster">
+        <h2>Cómo ve WorldCover lo agrícola quemado</h2>
+        <p class="cu-nota">Las hectáreas agrícolas quemadas según la clase que les asigna WorldCover 2021.</p>
+        <svg id="svg-wc" role="img" aria-label="Barras por clase de WorldCover"></svg>
+      </section>
+      <section class="cu-card" id="g-sev" data-source="raster">
+        <h2>Con qué severidad ardió lo agrícola</h2>
+        <p class="cu-nota">Hectáreas agrícolas quemadas por clase de severidad del dNBR (Key y Benson, 2006).</p>
+        <svg id="svg-sev" role="img" aria-label="Barras por severidad"></svg>
+      </section>
     </div>
 
-    <section class="note" id="metodo">
-      <h3>Método y limitaciones</h3>
-      <ul>
-        <li><b>Imágenes:</b> elegidas por el % de píxeles válidos dentro de la zona del incendio (capa SCL), no por la nubosidad de la escena completa. NBR = (B8A − B12)/(B8A + B12); dNBR = NBR antes − NBR después.</li>
-        <li><b>Quemado:</b> dNBR sembrado con focos VIIRS: cuenta cada mancha continua de dNBR ≥ 0,10 que toca un píxel a 1 km o menos de un foco; el umbral del visor se aplica dentro de esa mancha. Se excluyen nubes, sombras y agua (SCL + MNDWI).</li>
-        <li><b>Cruce:</b> la superficie agrícola del MIDAGRI (SAN 2024) se rasterizó a la misma grilla de 20 m. La distancia a la cicatriz es euclidiana, medida dentro del recuadro analizado.</li>
-        <li><b>Limitaciones:</b> la SAN 2024 incluye barbecho, no solo cultivo en pie; WorldCover es de 2021; la imagen previa es 16 días anterior al fuego, y el secado puede inflar el dNBR bajo; las nubes esconden parte de la zona.</li>
-      </ul>
-    </section>
+    <p class="cu-valid" id="validacion"><span>Validación: con dNBR ≥ 0,27 el método da <b><span data-source="resumen" data-field="cur_quemado_027_ha">—</span> ha</b>, <b><span data-source="resumen" data-field="cur_dif_ref_pct">—</span> %</b> frente a una medición independiente del mismo incendio (<span data-source="resumen" data-field="ref_027_ha">—</span> ha, imágenes del 5 y 17 oct).</span></p>
+
+    <details class="cu-metodo" id="metodo">
+      <summary>Método, fechas y limitaciones</summary>
+      <dl>
+        <dt>Imágenes</dt><dd>Sentinel-2 L2A (Earth Search, tile 18LYK), elegidas por el % de píxeles válidos dentro de la zona según la capa SCL. Previa: <span data-source="resumen" data-field="cur_antes">—</span> (<span data-source="resumen" data-field="cur_valido_antes">—</span> % válido); posterior: <span data-source="resumen" data-field="cur_despues">—</span> (<span data-source="resumen" data-field="cur_valido_despues">—</span> %).</dd>
+        <dt>Quemado</dt><dd>NBR = (B8A − B12)/(B8A + B12); dNBR = NBR antes − NBR después. Cuenta cada mancha continua de dNBR ≥ 0,10 que toca un píxel a 1 km o menos de un foco VIIRS; el umbral del visor se aplica dentro de esa mancha. Se excluyen nubes, sombras y agua (SCL y MNDWI).</dd>
+        <dt>Superficie agrícola</dt><dd>Superficie Agrícola Nacional 2024 del MIDAGRI, rasterizada a la grilla de 20 m. Incluye tierras en descanso, no solo cultivo en pie.</dd>
+        <dt>Dinámica agrícola</dt><dd>Regla de la app Dinámica Agrícola del MIDAGRI sobre el NDVI máximo mensual de octubre 2025 a septiembre 2026: barbecho si el máximo ≤ 0,3; permanente si el mínimo > 0,3; transitorio en el resto; al menos 3 meses válidos. "Permanente" también incluye monte siempre verde.</dd>
+        <dt>Distancia</dt><dd>Euclidiana, al píxel quemado más cercano, dentro del recuadro de 24 × 19 km: el anillo de 5 km llega al borde, así que es un mínimo.</dd>
+        <dt>Limitaciones</dt><dd>La imagen previa es 16 días anterior al fuego y el secado puede inflar el dNBR bajo; WorldCover es de 2021; las nubes ocultan el <span data-source="resumen" data-field="cur_sin_dato_pct">—</span> % de la zona.</dd>
+      </dl>
+    </details>
   </div>
 
-  <div class="pag" id="nacional" role="tabpanel" aria-labelledby="tab-nacional" hidden></div>
+  <div class="cu-pag" id="nacional" role="tabpanel" aria-labelledby="tab-nacional" hidden></div>
   <template id="tpl-nacional">
-    <header style="display:flex;flex-direction:column;gap:6px">
-      <h3>Contexto nacional · focos VIIRS del <span data-source="resumen" data-field="desde">—</span> al <span data-source="resumen" data-field="corte_utc">—</span> UTC</h3>
-      <h2>Lo que muestra Curahuasi se repite en todo el país</h2>
-      <p class="sub">Cruce de los focos de calor de NASA FIRMS (S-NPP, NOAA-20 y NOAA-21) con la Superficie Agrícola Nacional 2024. Incendio: focos a 1 km o menos y 48 h o menos entre sí; activo si tuvo focos en las últimas 24 h. WorldCover se lee en el centro de los mismos focos.</p>
+    <header class="cu-head">
+      <p class="cu-eyebrow">Perú · focos VIIRS del <span data-source="resumen" data-field="desde">—</span> al <span data-source="resumen" data-field="corte_utc">—</span> UTC</p>
+      <h1 class="cu-title">El patrón de Curahuasi se repite en el país</h1>
+      <p class="cu-lede">El <b class="x"><span data-source="resumen" data-field="pct_focos_agricola_midagri">—</span> %</b> de los <span data-source="resumen" data-field="focos">—</span> focos de calor cae en superficie agrícola del MIDAGRI, pero WorldCover solo ve cultivo en el <b><span data-source="resumen" data-field="pct_focos_cultivo_worldcover">—</span> %</b>: a la mayoría de esos focos los clasifica como bosque o pastizal.</p>
     </header>
-    <div class="kpis" id="cifras-nacionales">
-      <div class="kpi"><span class="v"><span data-source="resumen" data-field="pct_focos_cultivo_worldcover">—</span> %</span><span class="l">de los mismos focos cae en "Cultivo" según WorldCover 2021</span></div>
-      <div class="kpi hot"><span class="v"><span data-source="resumen" data-field="pct_focos_agricola_midagri">—</span> %</span><span class="l">de los <span data-source="resumen" data-field="focos">—</span> focos cae en superficie agrícola según el MIDAGRI</span></div>
-      <div class="kpi"><span class="v"><span data-source="resumen" data-field="pct_focos_agricola_wc_pastizal_bosque">—</span> %</span><span class="l">de los focos en superficie agrícola caen en lo que WorldCover llama bosque o pastizal</span></div>
-      <div class="kpi"><span class="v"><span data-source="resumen" data-field="pct_activos_con_agricola">—</span> %</span><span class="l">de los <span data-source="resumen" data-field="activos">—</span> incendios activos tiene superficie agrícola dentro de su huella (píxeles VIIRS de 375 m)</span></div>
-      <div class="kpi hot"><span class="v"><span data-source="resumen" data-field="agricola_5km_activos_ha">—</span> ha</span><span class="l">agrícolas a 5 km o menos de algún incendio activo, cada hectárea contada una vez; el <span data-source="resumen" data-field="pct_top3_deps">—</span> % en <span data-source="resumen" data-field="dep1">—</span>, <span data-source="resumen" data-field="dep2">—</span> y <span data-source="resumen" data-field="dep3">—</span></span></div>
+    <div class="cu-stats" id="cifras-nacionales">
+      <div class="cu-stat hot"><span class="cu-k">Focos en superficie agrícola</span><span class="cu-v"><span data-source="resumen" data-field="pct_focos_agricola_midagri">—</span> <small>%</small></span><span class="cu-n">según la SAN 2024 del MIDAGRI</span></div>
+      <div class="cu-stat"><span class="cu-k">Los mismos focos en "Cultivo"</span><span class="cu-v"><span data-source="resumen" data-field="pct_focos_cultivo_worldcover">—</span> <small>%</small></span><span class="cu-n">según WorldCover 2021</span></div>
+      <div class="cu-stat"><span class="cu-k">Agrícolas vistos como bosque o pastizal</span><span class="cu-v"><span data-source="resumen" data-field="pct_focos_agricola_wc_pastizal_bosque">—</span> <small>%</small></span><span class="cu-n">de los focos en superficie agrícola</span></div>
+      <div class="cu-stat"><span class="cu-k">Incendios activos sobre lo agrícola</span><span class="cu-v"><span data-source="resumen" data-field="pct_activos_con_agricola">—</span> <small>%</small></span><span class="cu-n"><span data-source="resumen" data-field="activos_con_agricola_en_huella">—</span> de <span data-source="resumen" data-field="activos">—</span> con superficie agrícola en su huella</span></div>
+      <div class="cu-stat hot"><span class="cu-k">Agrícola a ≤ 5 km del fuego</span><span class="cu-v"><span data-source="resumen" data-field="agricola_5km_activos_ha">—</span> <small>ha</small></span><span class="cu-n"><span data-source="resumen" data-field="agricola_1km_activos_ha">—</span> ha a ≤ 1 km; cada hectárea cuenta una vez</span></div>
     </div>
-    <div class="mapwrap" id="mapa" data-source="incendios limites"></div>
-    <div class="legend"><span><span class="dot" style="background:var(--color-bad)"></span>Incendio activo</span><span><span class="dot" style="background:var(--color-fg-muted)"></span>Sin focos en 24 h (huella mayor a 100 ha)</span><span>Tamaño: hectáreas agrícolas a 5 km o menos. Pasa el cursor para ver el detalle.</span></div>
+    <div class="cu-grid">
+      <section class="cu-card" id="g-mapa" data-source="incendios limites">
+        <h2>Incendios y superficie agrícola cercana</h2>
+        <p class="cu-nota">Círculo: hectáreas agrícolas a 5 km o menos de cada incendio. Rojo: activo (focos en 24 h); gris: huella mayor a 100 ha sin focos recientes.</p>
+        <div class="cu-mapa" id="mapa"></div>
+      </section>
+      <section class="cu-card" id="g-deptos" data-source="departamentos">
+        <h2>Superficie agrícola a ≤ 5 km de incendios activos</h2>
+        <p class="cu-nota">Hectáreas por departamento; unión de los anillos, cada hectárea cuenta una vez.</p>
+        <svg id="svg-deptos" role="img" aria-label="Barras por departamento"></svg>
+      </section>
+    </div>
   </template>
 </div>
 <script>
@@ -138,22 +174,34 @@
   var coma = function (x, d) { return (+x).toFixed(d).replace(".", ","); };
   var NS = "http://www.w3.org/2000/svg";
   function el(tag, at, padre, txt) { var e = document.createElementNS(NS, tag); for (var k in at) e.setAttribute(k, at[k]); if (txt != null) e.textContent = txt; if (padre) padre.appendChild(e); return e; }
+  function css(v) { return getComputedStyle(document.querySelector(".cu")).getPropertyValue(v).trim(); }
 
   var WC = { 10: ["Bosque", [0, 100, 0]], 20: ["Matorral", [255, 187, 34]], 30: ["Pastizal", [255, 255, 76]], 40: ["Cultivo", [240, 150, 255]],
     50: ["Urbano", [250, 0, 0]], 60: ["Suelo desnudo", [180, 180, 180]], 70: ["Nieve", [240, 240, 240]], 80: ["Agua", [0, 100, 200]],
     90: ["Humedal", [0, 150, 160]], 95: ["Manglar", [0, 207, 117]], 100: ["Musgo", [250, 230, 160]] };
   var SEVN = ["Baja", "Moderada baja", "Moderada alta", "Alta"], SEV = [[253, 212, 158], [252, 141, 89], [215, 48, 31], [127, 0, 0]], CORTES = [0.27, 0.44, 0.66];
-  var ANILLOS = [["Quemada", 0, [230, 20, 60]], ["0–500 m", 500, [255, 95, 30]], ["500 m–1 km", 1000, [255, 150, 40]], ["1–2 km", 2000, [255, 205, 70]], ["2–5 km", 5000, [255, 240, 160]]];
+  var DINN = ["Sin dato", "Barbecho", "Transitorio", "Permanente"], DIN = [[138, 138, 138], [217, 160, 91], [76, 120, 200], [46, 139, 87]], DIN_ORDEN = [3, 2, 1, 0];
+  var DIN_EXPLICA = ["sin dato", "barbecho (nunca verde en el año)", "transitorio (verde solo parte del año)", "permanente (siempre verde: frutales, pastos con riego o monte)"];
+  var ANILLOS = [["Quemada", 0, [215, 38, 61]], ["0–500 m", 500, [255, 95, 30]], ["500 m–1 km", 1000, [255, 150, 40]], ["1–2 km", 2000, [255, 205, 70]], ["2–5 km", 5000, [255, 240, 160]]];
   var RAMPA = [[26, 152, 80], [145, 207, 96], [255, 255, 191], [253, 174, 97], [215, 48, 31], [127, 0, 0]];
+  var NOTAS = {
+    agri: "Rojo: superficie agrícola del MIDAGRI que se quemó. Naranja: quemado fuera de ella. Verde: superficie agrícola sin quemar.",
+    din: "Superficie agrícola según su NDVI en los 12 meses previos al fuego (regla Dinámica Agrícola del MIDAGRI). Tono intenso: se quemó.",
+    dist: "Superficie agrícola coloreada por su distancia euclidiana al píxel quemado más cercano.",
+    wc: "Clases de ESA WorldCover 2021; lo quemado se ve brillante. Compárala con la capa Quemado × agrícola.",
+    sev: "Severidad del dNBR dentro del área quemada (Key y Benson, 2006).",
+    dnbr: "dNBR continuo: negativo es rebrote, cerca de 0 sin cambio, alto es quemado intenso.",
+    antes: "Sentinel-2 en color real (B4, B3, B2) a 40 m, antes del fuego.", despues: "Sentinel-2 en color real (B4, B3, B2) a 40 m, después del fuego."
+  };
   var st = { pag: "curahuasi", capa: "agri", umbral: 0.10, R: null, C: null, quem: null, d2: null, srcR: null, srcC: null, res: null };
   var cv = document.getElementById("cv"), ctx = cv.getContext("2d");
 
   // ---------- datos del raster
   function dec(s) { var b = atob(s), a = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a; }
   function cargarRaster(rows) {
-    var m = rows[0], W = m.ancho, H = m.alto, n = W * H;
-    var R = { W: W, H: H, px: m.pixel_m, dnbr: new Uint8Array(n), flags: new Uint8Array(n), wc: new Uint8Array(n) };
-    rows.forEach(function (r) { var o = r.fila * W; R.dnbr.set(dec(r.dnbr), o); R.flags.set(dec(r.flags), o); R.wc.set(dec(r.wc), o); });
+    var m = rows[0], W = m.ancho, H = m.alto, n = W * H, conDin = !!m.din;
+    var R = { W: W, H: H, px: m.pixel_m, dnbr: new Uint8Array(n), flags: new Uint8Array(n), wc: new Uint8Array(n), din: conDin ? new Uint8Array(n) : null };
+    rows.forEach(function (r) { var o = r.fila * W; R.dnbr.set(dec(r.dnbr), o); R.flags.set(dec(r.flags), o); R.wc.set(dec(r.wc), o); if (conDin) R.din.set(dec(r.din), o); });
     return R;
   }
   function cargarColor(rows) {
@@ -166,9 +214,8 @@
     return { antes: mk("antes"), despues: mk("despues") };
   }
 
-  // ---------- análisis en vivo
-  // dNBR sembrado (igual que src/02): mancha sembrada a 0,10 desde píxeles a <= 1 km de un foco (4 vecinos, como scipy.label);
-  // el umbral elegido se aplica dentro de esa mancha. Bajo 0,10 se siembra al umbral elegido.
+  // ---------- análisis en vivo (igual que src/02 y src/05)
+  // mancha sembrada a 0,10 desde píxeles a <= 1 km de un foco (4 vecinos, como scipy.label); el umbral elegido se aplica dentro
   function sembrar() {
     var R = st.R, W = R.W, n = W * R.H, q = Math.round((st.umbral + 0.5) * 100), qb = Math.min(q, 60);
     var ok = new Uint8Array(n), out = new Uint8Array(n), cola = new Int32Array(n), h = 0, t = 0, i;
@@ -208,42 +255,72 @@
     return -1;
   }
   function resumir() {
-    var R = st.R, n = R.W * R.H, ha = R.px * R.px / 1e4, nq = 0, wc40 = 0, ani = [0, 0, 0, 0, 0], wcA = {}, sevA = [0, 0, 0, 0];
+    var R = st.R, n = R.W * R.H, ha = R.px * R.px / 1e4, nq = 0, wc40 = 0, ani = [0, 0, 0, 0, 0], aniD = ANILLOS.map(function () { return [0, 0, 0, 0]; }), wcA = {}, sevA = [0, 0, 0, 0];
     for (var i = 0; i < n; i++) {
       if (st.quem[i]) { nq++; if (R.wc[i] === 40) wc40++; }
       if (R.flags[i] & 4) {
-        var k = anillo(i); if (k >= 0) ani[k]++;
+        var k = anillo(i);
+        if (k >= 0) { ani[k]++; if (R.din) aniD[k][R.din[i]]++; }
         if (k === 0) {
           wcA[R.wc[i]] = (wcA[R.wc[i]] || 0) + 1;
           var v = R.dnbr[i] / 100 - 0.5, s = 0; while (s < 3 && v >= CORTES[s] - 1e-9) s++; sevA[s]++;
         }
       }
     }
-    st.res = { ha: ha, quem: nq * ha, agri: ani[0] * ha, wc: wc40 * ha, ani: ani.map(function (c) { return c * ha; }),
-      wcA: Object.keys(wcA).map(function (k) { return { k: +k, v: wcA[k] * ha }; }).sort(function (a, b) { return b.v - a.v; }), sevA: sevA.map(function (c) { return c * ha; }) };
+    var x = function (c) { return c * ha; };
+    st.res = { quem: nq * ha, agri: ani[0] * ha, wc: wc40 * ha, ani: ani.map(x), aniD: aniD.map(function (a) { return a.map(x); }),
+      wcA: Object.keys(wcA).map(function (k) { return { k: +k, v: wcA[k] * ha }; }).sort(function (a, b) { return b.v - a.v; }), sevA: sevA.map(x) };
   }
+  function txt(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; }
   function cifras() {
     var r = st.res; if (!r) return;
-    document.getElementById("k-quem").textContent = es(r.quem);
-    document.getElementById("k-agri").textContent = es(r.agri);
-    document.getElementById("k-agri-pct").textContent = r.quem ? coma(100 * r.agri / r.quem, 1) : "—";
-    document.getElementById("k-wc").textContent = es(r.wc);
-    document.getElementById("k-veces").textContent = r.wc >= 1 ? coma(r.agri / r.wc, 1) : "—";
-    document.getElementById("k-1km").textContent = es(r.ani[1] + r.ani[2]);
-    barras("svg-dist", ANILLOS.map(function (a, k) { return { l: a[0], v: r.ani[k], c: a[2] }; }));
+    var c1 = r.ani[1] + r.ani[2];
+    txt("k-quem", es(r.quem)); txt("k-agri", es(r.agri)); txt("k-agri-pct", r.quem ? coma(100 * r.agri / r.quem, 1) : "—");
+    txt("k-wc", es(r.wc)); txt("k-veces", r.wc >= 1 ? coma(r.agri / r.wc, 1) : "—"); txt("k-1km", es(c1));
+    txt("l-quem", es(r.quem)); txt("l-agri", es(r.agri)); txt("l-wc", es(r.wc)); txt("l-1km", es(c1));
+    var ld = document.getElementById("l-din"); ld.textContent = "";
+    if (st.R.din && r.agri > 0) {
+      var q = r.aniD[0], tot = q[1] + q[2] + q[3], top = [1, 2, 3].sort(function (a, b) { return q[b] - q[a]; })[0];
+      if (tot > 0) {
+        ld.appendChild(document.createTextNode(" Antes del fuego, el "));
+        var b = document.createElement("b"); b.textContent = Math.round(100 * q[top] / tot) + " %"; ld.appendChild(b);
+        ld.appendChild(document.createTextNode(" de esa superficie quemada se comportaba como " + DIN_EXPLICA[top] + "."));
+      }
+    }
+    apiladas("svg-dist", ANILLOS.map(function (a, k) {
+      return { l: a[0], partes: st.R.din ? DIN_ORDEN.map(function (c) { return { v: r.aniD[k][c], c: DIN[c] }; }) : [{ v: r.ani[k], c: a[2] }] };
+    }));
+    var mini = document.getElementById("mini-din"); mini.textContent = "";
+    if (st.R.din) DIN_ORDEN.forEach(function (c) { var s = document.createElement("span"), i = document.createElement("i"); i.style.background = "rgb(" + DIN[c].join(",") + ")"; s.appendChild(i); s.appendChild(document.createTextNode(DINN[c])); mini.appendChild(s); });
     barras("svg-wc", r.wcA.filter(function (x) { return x.v >= 0.5; }).map(function (x) { return { l: (WC[x.k] || ["Sin clase"])[0], v: x.v, c: (WC[x.k] || ["", [120, 120, 120]])[1] }; }));
     barras("svg-sev", SEVN.map(function (s, k) { return { l: s, v: r.sevA[k], c: SEV[k] }; }));
   }
-  function barras(id, items) {
-    var svg = document.getElementById(id); while (svg.firstChild) svg.removeChild(svg.firstChild);
-    var w = svg.parentNode.clientWidth - 32; if (!(w > 0)) return;
-    var L = 112, lh = 26, H = Math.max(1, items.length) * lh + 4, vmax = items.reduce(function (m, x) { return x.v > m ? x.v : m; }, 0) || 1;
+
+  // ---------- gráficos de barras (SVG propio, colores de texto del tema)
+  function limpiar(svg) { while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function anchoEtiquetas(svg, labels) {
+    var m = 0; labels.forEach(function (l) { var t = el("text", { "font-size": 12 }, svg, l); m = Math.max(m, t.getComputedTextLength()); svg.removeChild(t); });
+    return Math.ceil(m) + 12;
+  }
+  function barras(id, items) { apiladas(id, items.map(function (x) { return { l: x.l, partes: [{ v: x.v, c: x.c }] }; })); }
+  function apiladas(id, filas) {
+    var svg = document.getElementById(id); limpiar(svg);
+    var w = svg.getBoundingClientRect().width; if (!(w > 0)) return;
+    svg.setAttribute("viewBox", "0 0 " + w + " 10");
+    var L = anchoEtiquetas(svg, filas.map(function (f) { return f.l; })), lh = 30, bh = 18, H = Math.max(1, filas.length) * lh;
+    var tot = filas.map(function (f) { return f.partes.reduce(function (s, p) { return s + p.v; }, 0); });
+    var vmax = Math.max.apply(null, tot.concat([1])), ancho = Math.max(40, w - L - 64);
     svg.setAttribute("viewBox", "0 0 " + w + " " + H); svg.setAttribute("height", H);
-    items.forEach(function (x, i) {
-      var y = i * lh + 4, bw = Math.max(x.v > 0 ? 2 : 0, (w - L - 56) * x.v / vmax);
-      el("text", { x: L - 8, y: y + 14, "text-anchor": "end", "font-size": 12, fill: "var(--color-fg)" }, svg, x.l);
-      el("rect", { x: L, y: y + 2, width: bw, height: 16, rx: 3, fill: "rgb(" + x.c.join(",") + ")", stroke: "var(--color-border-line)", "stroke-width": 0.5 }, svg);
-      el("text", { x: L + bw + 6, y: y + 14, "font-size": 12, fill: "var(--color-fg-muted)" }, svg, es(x.v));
+    filas.forEach(function (f, i) {
+      var y = i * lh + (lh - bh) / 2, x = L;
+      el("text", { x: L - 10, y: y + bh / 2 + 4, "text-anchor": "end", "font-size": 12, fill: "var(--color-fg)" }, svg, f.l);
+      el("rect", { x: L, y: y, width: ancho, height: bh, rx: 4, fill: "var(--cds-chart-grid)", opacity: 0.35 }, svg);
+      f.partes.forEach(function (p) {
+        var bw = ancho * p.v / vmax; if (bw <= 0) return;
+        el("rect", { x: x, y: y, width: Math.max(bw, 1.5), height: bh, fill: "rgb(" + p.c.join(",") + ")" }, svg);
+        x += bw;
+      });
+      el("text", { x: L + Math.max(ancho * tot[i] / vmax, 0) + 8, y: y + bh / 2 + 4, "font-size": 12, fill: "var(--color-fg-muted)", "font-variant-numeric": "tabular-nums" }, svg, es(tot[i]) + " ha");
     });
   }
 
@@ -254,45 +331,48 @@
   }
   function dibujar() {
     var R = st.R; if (!R) return;
-    var W = R.W, H = R.H, n = W * H;
+    var W = R.W, H = R.H, n = W * H, capa = st.capa === "din" && !R.din ? "agri" : st.capa;
     cv.width = W; cv.height = H;
-    ctx.imageSmoothingEnabled = true; ctx.drawImage(st.capa === "antes" ? st.C.antes : st.C.despues, 0, 0, W, H);
-    if (st.capa !== "antes" && st.capa !== "despues") {
+    ctx.imageSmoothingEnabled = true; ctx.drawImage(capa === "antes" ? st.C.antes : st.C.despues, 0, 0, W, H);
+    if (capa !== "antes" && capa !== "despues") {
       var im = ctx.getImageData(0, 0, W, H), d = im.data;
       for (var i = 0; i < n; i++) {
         var o = i * 4, q = R.dnbr[i], c = null, a = 1, ag = R.flags[i] & 4, qm = st.quem[i];
-        if (q === 0 && st.capa !== "dist" && st.capa !== "wc") { d[o] = d[o + 1] = d[o + 2] = 60; continue; }
+        if (q === 0 && capa !== "dist" && capa !== "wc" && capa !== "din") { d[o] = d[o + 1] = d[o + 2] = 55; continue; }
         var v = q / 100 - 0.5;
-        if (st.capa === "dnbr") c = rampa(v);
-        else if (st.capa === "sev") { if (qm) { var k = 0; while (k < 3 && v >= CORTES[k] - 1e-9) k++; c = SEV[k]; } else a = 0.45; }
-        else if (st.capa === "wc") { c = (WC[R.wc[i]] || ["", [0, 0, 0]])[1]; a = qm ? 0.95 : 0.35; }
-        else if (st.capa === "agri") { if (qm && ag) c = [230, 20, 60]; else if (qm) c = [255, 140, 0]; else if (ag) { c = [60, 200, 90]; a = 0.6; } else a = 0.45; }
-        else if (st.capa === "dist") {
-          if (ag) { var kk = anillo(i); if (kk >= 0) c = ANILLOS[kk][2]; else { c = [60, 200, 90]; a = 0.55; } }
-          else if (qm) { c = [90, 30, 30]; a = 0.55; } else a = 0.4;
+        if (capa === "dnbr") c = rampa(v);
+        else if (capa === "sev") { if (qm) { var k = 0; while (k < 3 && v >= CORTES[k] - 1e-9) k++; c = SEV[k]; } else a = 0.42; }
+        else if (capa === "wc") { c = (WC[R.wc[i]] || ["", [0, 0, 0]])[1]; a = qm ? 0.95 : 0.3; }
+        else if (capa === "agri") { if (qm && ag) c = [215, 38, 61]; else if (qm) c = [242, 143, 59]; else if (ag) { c = [63, 163, 77]; a = 0.62; } else a = 0.42; }
+        else if (capa === "din") { if (ag) { c = DIN[R.din[i]]; a = qm ? 1 : 0.6; } else if (qm) { c = [90, 30, 30]; a = 0.55; } else a = 0.38; }
+        else if (capa === "dist") {
+          if (ag) { var kk = anillo(i); if (kk >= 0) c = ANILLOS[kk][2]; else { c = [63, 163, 77]; a = 0.55; } }
+          else if (qm) { c = [90, 30, 30]; a = 0.55; } else a = 0.38;
         }
         if (c) { d[o] = d[o] * (1 - a) + c[0] * a; d[o + 1] = d[o + 1] * (1 - a) + c[1] * a; d[o + 2] = d[o + 2] * (1 - a) + c[2] * a; }
         else { d[o] *= a; d[o + 1] *= a; d[o + 2] *= a; }
       }
       ctx.putImageData(im, 0, 0);
     }
-    leyenda();
+    leyenda(capa);
+    txt("nota-capa", NOTAS[capa] || "");
   }
-  function leyenda() {
+  function leyenda(capa) {
     var L = document.getElementById("ley"); L.textContent = "";
-    var item = function (rgb, txt) { var s = document.createElement("span"), i = document.createElement("i"); i.style.background = "rgb(" + rgb.join(",") + ")"; s.appendChild(i); s.appendChild(document.createTextNode(txt)); L.appendChild(s); };
-    if (st.capa === "agri") { item([230, 20, 60], "Quemado sobre superficie agrícola"); item([255, 140, 0], "Quemado, no agrícola"); item([60, 200, 90], "Superficie agrícola sin quemar"); }
-    else if (st.capa === "dist") { ANILLOS.forEach(function (a) { item(a[2], "Agrícola: " + a[0].toLowerCase()); }); item([60, 200, 90], "Agrícola a más de 5 km"); item([90, 30, 30], "Quemado, no agrícola"); }
-    else if (st.capa === "sev") { SEVN.forEach(function (t, k) { item(SEV[k], t); }); }
-    else if (st.capa === "wc") { [10, 20, 30, 40, 60].forEach(function (k) { item(WC[k][1], WC[k][0]); }); var s0 = document.createElement("span"); s0.textContent = "Brillante: dentro del área quemada."; L.appendChild(s0); }
-    else if (st.capa === "dnbr") { var r = document.createElement("div"); r.className = "rampa"; L.appendChild(r); var t = document.createElement("span"); t.textContent = "−0,3 rebrote · 0 sin cambio · 0,8 quemado intenso"; L.appendChild(t); }
-    else { var s = document.createElement("span"); s.textContent = "Sentinel-2 en color real (B4, B3, B2) a 40 m."; L.appendChild(s); }
-    if (st.capa !== "antes" && st.capa !== "despues" && st.capa !== "dist" && st.capa !== "wc") item([60, 60, 60], "Nube, sombra o sin dato");
+    var item = function (rgb, t) { var s = document.createElement("span"), i = document.createElement("i"); i.style.background = "rgb(" + rgb.join(",") + ")"; s.appendChild(i); s.appendChild(document.createTextNode(t)); L.appendChild(s); };
+    if (capa === "agri") { item([215, 38, 61], "Agrícola quemada"); item([242, 143, 59], "Quemado no agrícola"); item([63, 163, 77], "Agrícola sin quemar"); }
+    else if (capa === "din") { DIN_ORDEN.forEach(function (c) { item(DIN[c], DINN[c]); }); item([90, 30, 30], "Quemado no agrícola"); }
+    else if (capa === "dist") { ANILLOS.forEach(function (a) { item(a[2], a[0]); }); item([63, 163, 77], "Más de 5 km"); }
+    else if (capa === "sev") { SEVN.forEach(function (t, k) { item(SEV[k], t); }); }
+    else if (capa === "wc") { [10, 20, 30, 40, 60].forEach(function (k) { item(WC[k][1], WC[k][0]); }); }
+    else if (capa === "dnbr") { var s = document.createElement("span"); s.appendChild(document.createTextNode("−0,3")); var r = document.createElement("span"); r.className = "rampa"; s.appendChild(r); s.appendChild(document.createTextNode("0,8")); L.appendChild(s); }
+    else { var t = document.createElement("span"); t.textContent = "Color real"; L.appendChild(t); }
+    if (capa === "agri" || capa === "sev" || capa === "dnbr") item([55, 55, 55], "Nube o sin dato");
   }
 
-  document.querySelectorAll("#visor .capas button").forEach(function (b) {
+  document.querySelectorAll("#visor .cu-seg button").forEach(function (b) {
     b.addEventListener("click", function () {
-      document.querySelectorAll("#visor .capas button").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+      document.querySelectorAll("#visor .cu-seg button").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
       st.capa = b.getAttribute("data-capa"); dibujar();
     });
   });
@@ -302,15 +382,16 @@
     document.querySelectorAll(".k-umbral").forEach(function (x) { x.textContent = coma(st.umbral, 2); });
     clearTimeout(timer); timer = setTimeout(function () { if (st.R) { sembrar(); resumir(); cifras(); dibujar(); } }, 120);
   });
-  // lectura del píxel bajo el puntero (mouse, lápiz o toque), junto al puntero
+  // lectura del píxel junto al puntero (mouse, lápiz o toque)
   function leerPixel(e) {
     var R = st.R, Lc = document.getElementById("lect"); if (!R || !st.quem) return;
     var b = cv.getBoundingClientRect(); if (!b.width || !b.height) return;
     var px = e.clientX - b.left, py = e.clientY - b.top, x = Math.floor(px / b.width * R.W), y = Math.floor(py / b.height * R.H);
     if (x < 0 || y < 0 || x >= R.W || y >= R.H) { Lc.hidden = true; return; }
-    var i = y * R.W + x, q = R.dnbr[i], dm = Math.sqrt(st.d2[i]) * R.px;
+    var i = y * R.W + x, q = R.dnbr[i], dm = Math.sqrt(st.d2[i]) * R.px, ag = R.flags[i] & 4;
     Lc.textContent = (q === 0 ? "Nube o sin dato" : "dNBR " + coma(q / 100 - 0.5, 2) + (st.quem[i] ? " · quemado" : " · a " + es(dm) + " m de la cicatriz")) +
-      "\nMIDAGRI: " + (R.flags[i] & 4 ? "superficie agrícola" : "no agrícola") + "\nWorldCover: " + ((WC[R.wc[i]] || ["sin clase"])[0]);
+      "\nMIDAGRI: " + (ag ? "superficie agrícola" + (R.din ? " (" + DINN[R.din[i]].toLowerCase() + ")" : "") : "no agrícola") +
+      "\nWorldCover: " + ((WC[R.wc[i]] || ["sin clase"])[0]);
     Lc.hidden = false;
     var w = Lc.offsetWidth, h = Lc.offsetHeight, l = px + 14, t = py + 14;
     if (l + w > b.width - 6) l = px - w - 14;
@@ -324,7 +405,7 @@
   // ---------- pestañas
   function abrir(p) {
     st.pag = p;
-    document.querySelectorAll(".mo .tabs button").forEach(function (b) { b.setAttribute("aria-selected", b.getAttribute("data-pag") === p ? "true" : "false"); });
+    document.querySelectorAll(".cu-tabs button").forEach(function (b) { b.setAttribute("aria-selected", b.getAttribute("data-pag") === p ? "true" : "false"); });
     document.getElementById("curahuasi").hidden = p !== "curahuasi";
     var nac = document.getElementById("nacional");
     if (p === "nacional" && !nac.firstElementChild) nac.appendChild(document.getElementById("tpl-nacional").content.cloneNode(true));
@@ -332,14 +413,14 @@
     try { dash.setLink(p); } catch (e) {}
     pintar();
   }
-  document.querySelectorAll(".mo .tabs button").forEach(function (b) { b.addEventListener("click", function () { abrir(b.getAttribute("data-pag")); }); });
+  document.querySelectorAll(".cu-tabs button").forEach(function (b) { b.addEventListener("click", function () { abrir(b.getAttribute("data-pag")); }); });
 
   // ---------- mapa nacional
   function rings(g) { return g.type === "Polygon" ? g.coordinates : g.type === "MultiPolygon" ? [].concat.apply([], g.coordinates) : []; }
-  function mercator(fs, W, H) {
+  function mercator(gs, W, H) {
     var raw = function (p) { return [p[0] * Math.PI / 180, Math.log(Math.tan(Math.PI / 4 + p[1] * Math.PI / 360))]; };
     var x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
-    fs.forEach(function (g) { rings(g).forEach(function (r) { r.forEach(function (p) { var q = raw(p);
+    gs.forEach(function (g) { rings(g).forEach(function (r) { r.forEach(function (p) { var q = raw(p);
       if (q[0] < x0) x0 = q[0]; if (q[0] > x1) x1 = q[0]; if (q[1] < y0) y0 = q[1]; if (q[1] > y1) y1 = q[1]; }); }); });
     var k = Math.min(W / (x1 - x0), H / (y1 - y0)), ox = (W - k * (x1 - x0)) / 2, oy = (H - k * (y1 - y0)) / 2;
     return function (p) { var q = raw(p); return [ox + k * (q[0] - x0), oy + k * (y1 - q[1])]; };
@@ -350,36 +431,48 @@
     var inc = dash.data("incendios"), lim = dash.data("limites");
     if (inc.status !== "ok" || lim.status !== "ok") return;
     var W = cont.clientWidth; if (!(W > 0)) return;
-    var H = Math.round(W * (W < 600 ? 1.3 : 0.75));
+    var H = Math.round(W * 1.25);
     var geoms = lim.data.map(function (d) { return JSON.parse(d.geom); }), proj = mercator(geoms, W, H);
     var svg = el("svg", { width: "100%", viewBox: "0 0 " + W + " " + H }, cont), gp = el("g", {}, svg), gc = el("g", {}, svg);
     geoms.forEach(function (g) {
       var dd = rings(g).map(function (r) { return "M" + r.map(function (p) { var q = proj(p); return q[0].toFixed(1) + "," + q[1].toFixed(1); }).join("L") + "Z"; }).join("");
-      el("path", { d: dd, fill: "var(--color-panel)", stroke: "var(--color-border-line)", "stroke-width": 0.8 }, gp);
+      el("path", { d: dd, fill: "var(--color-bg)", stroke: "var(--color-border-line)", "stroke-width": 0.8 }, gp);
     });
     var rows = inc.data.filter(function (d) { return !isNaN(+d.cultivo_5km_ha); }).sort(function (a, b) { return +b.cultivo_5km_ha - +a.cultivo_5km_ha; });
     var cmax = rows.reduce(function (m, d) { return +d.cultivo_5km_ha > m ? +d.cultivo_5km_ha : m; }, 1);
-    var tip = document.createElement("div"); tip.className = "tip"; tip.hidden = true; cont.appendChild(tip);
+    var tip = document.createElement("div"); tip.className = "cu-tip"; tip.hidden = true; cont.appendChild(tip);
     rows.forEach(function (d) {
-      var p = proj([+d.lon, +d.lat]);
-      var c = el("circle", { cx: p[0], cy: p[1], r: 2 + (Math.min(W, H) / 22 - 2) * Math.sqrt(+d.cultivo_5km_ha / cmax),
-        fill: d.estado === "Activo" ? "var(--color-bad)" : "var(--color-fg-muted)", "fill-opacity": 0.55, stroke: "var(--color-bg)", "stroke-width": 0.6 }, gc);
-      c.addEventListener("pointermove", function (ev) {
+      var p = proj([+d.lon, +d.lat]), activo = d.estado === "Activo";
+      var c = el("circle", { cx: p[0], cy: p[1], r: 2 + (W / 24 - 2) * Math.sqrt(+d.cultivo_5km_ha / cmax),
+        fill: activo ? "var(--cds-chart-status-critical)" : "var(--cds-chart-muted)", "fill-opacity": activo ? 0.6 : 0.45, stroke: "var(--color-bg)", "stroke-width": 0.7 }, gc);
+      var mostrar = function (ev) {
         var b = cont.getBoundingClientRect(), x = ev.clientX - b.left + 12, y = ev.clientY - b.top + 12;
-        if (x > b.width - 240) x -= 260;
-        tip.hidden = false; tip.style.left = x + "px"; tip.style.top = y + "px"; tip.textContent = "";
-        [d.distrito + " (" + d.departamento + ")", d.estado + " · " + d.focos + " focos · huella " + es(d.huella_ha) + " ha",
-         "Agrícola a 1 km: " + es(d.cultivo_1km_ha) + " ha · a 5 km: " + es(d.cultivo_5km_ha) + " ha", "WorldCover (clase más común en sus focos): " + d.wc_cobertura]
-          .forEach(function (t, k) { var e = document.createElement(k ? "div" : "b"); e.textContent = t; tip.appendChild(e); });
-      });
+        tip.textContent = "";
+        var t = document.createElement("b"); t.textContent = d.distrito + " (" + d.departamento + ")"; tip.appendChild(t);
+        [d.estado + " · " + d.focos + " focos · huella " + es(d.huella_ha) + " ha", "Agrícola a 1 km: " + es(d.cultivo_1km_ha) + " ha · a 5 km: " + es(d.cultivo_5km_ha) + " ha",
+         "WorldCover (clase más común en sus focos): " + d.wc_cobertura].forEach(function (s) { var e = document.createElement("span"); e.textContent = s; tip.appendChild(e); });
+        tip.hidden = false;
+        if (x + tip.offsetWidth > b.width - 6) x = x - tip.offsetWidth - 24;
+        tip.style.left = Math.max(6, x) + "px"; tip.style.top = y + "px";
+      };
+      c.addEventListener("pointermove", mostrar); c.addEventListener("pointerdown", mostrar);
       c.addEventListener("pointerleave", function () { tip.hidden = true; });
     });
+  }
+  function deptos() {
+    var svg = document.getElementById("svg-deptos"); if (!svg) return;
+    var dp = dash.data("departamentos"); if (dp.status !== "ok") { limpiar(svg); return; }
+    var top = dp.data.filter(function (d) { return +d.agricola_5km_ha > 0; }).sort(function (a, b) { return +b.agricola_5km_ha - +a.agricola_5km_ha; }).slice(0, 12);
+    barras("svg-deptos", top.map(function (d, i) {
+      var t = d.departamento.toLowerCase().replace(/(^|\s)\S/g, function (s) { return s.toUpperCase(); }).replace(" De ", " de ");
+      return { l: t, v: +d.agricola_5km_ha, c: i < 3 ? [215, 38, 61] : [160, 160, 160] };
+    }));
   }
 
   // ---------- cifras del resumen y repintado
   function llenarResumen() {
     var r = dash.data("resumen");
-    document.querySelectorAll('[data-source="resumen"]').forEach(function (e) {
+    document.querySelectorAll('.cu [data-source="resumen"]').forEach(function (e) {
       if (r.status !== "ok" || !r.data.length) { e.textContent = "—"; return; }
       var v = String(r.data[0][e.getAttribute("data-field")]), n = Number(v);
       if (v !== "" && !isNaN(n) && !/^\d{4}-/.test(v)) e.textContent = Math.abs(n) >= 1000 ? es(n) : v.replace(".", ",");
@@ -394,16 +487,16 @@
         if (st.srcR !== ra.data || st.srcC !== co.data) {
           st.srcR = ra.data; st.srcC = co.data;
           st.R = cargarRaster(ra.data); st.C = cargarColor(co.data);
-          document.getElementById("ancho-km").textContent = coma(st.R.W * st.R.px / 1000, 1) + " × " + coma(st.R.H * st.R.px / 1000, 1);
+          txt("ancho-km", coma(st.R.W * st.R.px / 1000, 1) + " × " + coma(st.R.H * st.R.px / 1000, 1));
+          if (!st.R.din) document.querySelector('#visor [data-capa="din"]').hidden = true;
           sembrar(); resumir();
         }
         car.hidden = true; dibujar(); cifras();
       } else {
         car.hidden = false;
         car.textContent = ra.status === "error" || co.status === "error" ? "No se pudo cargar el raster." : "Cargando 1,1 millones de píxeles…";
-        ["k-quem", "k-agri", "k-agri-pct", "k-wc", "k-veces", "k-1km"].forEach(function (id) { document.getElementById(id).textContent = "—"; });
       }
-    } else mapa();
+    } else { mapa(); deptos(); }
   }
   dash.onData(pintar);
   try { if (location.hash === "#nacional") abrir("nacional"); } catch (e) {}
