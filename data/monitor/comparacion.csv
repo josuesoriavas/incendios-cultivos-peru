@@ -1,0 +1,7 @@
+incendio,departamento,evento,altitud_mediana_m,antes,despues,valido_antes,valido_despues,sin_dato_zona_pct,quemado_ha,quemado_027_ha,agricola_quemada_ha,chacras_quemadas_ha,pasto_quemado_ha,arboles_quemados_ha,wc_cultivo_quemado_ha,agricola_1km_ha,chacras_1km_ha,agricola_5km_ha,chacras_5km_ha,recuadro_km,exactitud_validacion_pct
+Curahuasi,Apurímac,E41216,2596,2026-09-20,2026-10-17,100,97,6.7,4574,1677,119,42,26,52,14,1435,353,4517,1318,24.2 x 18.8,81
+Río Tambo,Junín,E45347,604,2026-10-08,2026-10-20,100,48,56.0,1433,770,59,0,0,59,0,563,1,1392,2,12.5 x 12.4,93
+Sicuani,Cusco,E38662,3983,2026-09-25,2026-10-17,100,100,0.0,3436,1621,150,65,69,15,19,3455,2670,6701,4958,15.9 x 15.8,95
+Coyllurqui,Apurímac,E37866,3728,2026-09-20,2026-10-17,100,100,0.0,2058,835,314,11,265,38,1,911,155,3100,594,13.5 x 13.5,89
+San Pedro de Cachora,Apurímac,E41197,2781,2026-10-03,2026-10-13,100,98,0.0,1415,598,586,19,420,147,1,1579,203,3348,685,11.4 x 11.3,86
+Alto Pichigua,Cusco,E39747,4173,2026-09-25,2026-10-17,100,100,0.0,2614,1973,36,4,32,0,7,114,12,452,116,11.5 x 11.4,90

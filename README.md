@@ -17,6 +17,23 @@ Tarea de Ciencia de Datos con Python (Prof. Alexander Quispe, Universidad del Pa
 2. **Curahuasi: 4 574 ha quemadas (dNBR ≥ 0,10); 1 677 ha con dNBR ≥ 0,27**, cerca de las 1 786 ha del profesor con el mismo umbral (−6 %). Dentro del área quemada hay **119 ha de superficie agrícola**; WorldCover solo marca **14 ha** de "Cultivo" y clasifica la mayoría de esas parcelas como pastizal (67 ha) o bosque (32 ha). El 66 % de lo quemado es pastizal según WorldCover. Casi toda esa superficie agrícola (116 de 119 ha) ardió con severidad baja. **Pero no todo eso eran chacras:** un Random Forest con el NDVI de los 12 meses previos (oct 2025–sep 2026), la altitud y la pendiente, entrenado donde el MIDAGRI y WorldCover coinciden, indica que de esas 119 ha solo **42 ha eran cultivo**; 52 ha eran árboles y 26 ha pasto o matorral dentro de la máscara agrícola (validación espacial por bloques de 2 km: 81 % de exactitud; cultivo con 86 % de precisión y 73 % de exhaustividad, medida en píxeles puros). A ≤ 1 km de la cicatriz quedan **353 ha de chacras** sin quemar. La regla de Dinámica Agrícola del MIDAGRI, hecha para la costa, llamaba "permanentes" a 79 de esas 119 ha: en este valle el pasto y el matorral no se secan del todo.
 3. **Lo que se puede quemar:** hay **292 575 ha** de superficie agrícola a ≤ 5 km de alguno de los 181 incendios activos (con focos en las últimas 24 h), contando cada hectárea una vez, y 25 727 ha a ≤ 1 km. Los departamentos con más son Ucayali (55 257 ha), Junín (32 088) y Madre de Dios (31 413). El 66 % de los incendios activos (120) tiene superficie agrícola dentro de su huella. En Curahuasi quedan **1 435 ha** agrícolas sin quemar a ≤ 1 km de la cicatriz (12 veces lo quemado) y **4 517 ha** a ≤ 5 km (distancia euclidiana, dentro del recuadro analizado).
 
+## Los seis incendios más grandes de octubre, con el mismo método
+
+`src/07_comparacion_incendios.py` repite el análisis de Curahuasi en los cinco incendios con mayor huella después de Curahuasi (se excluye La Joya, que es suelo desnudo y probablemente una fuente fija). La clasificación en chacra, pasto o matorral y árboles usa un Random Forest entrenado con las referencias de los seis recuadros juntos (validación por bloques de 2 km: 88 % de exactitud, F1 de cultivo 0,92); Curahuasi conserva su propio modelo.
+
+| Incendio | Altitud | Quemado | Agrícola quemada | Chacras quemadas | Chacras sin quemar a ≤ 1 km |
+|---|---|---|---|---|---|
+| Curahuasi (Apurímac) | 2 600 m | 4 574 ha | 119 ha | 42 ha | 353 ha |
+| Sicuani (Cusco) | 3 980 m | 3 436 ha | 150 ha | 65 ha | 2 670 ha |
+| Alto Pichigua (Cusco) | 4 170 m | 2 614 ha | 36 ha | 4 ha | 12 ha |
+| Coyllurqui (Apurímac) | 3 730 m | 2 058 ha | 314 ha | 11 ha | 155 ha |
+| Río Tambo (Junín) | 600 m | 1 433 ha* | 59 ha | 0 ha* | 1 ha* |
+| San Pedro de Cachora (Apurímac) | 2 780 m | 1 415 ha | 586 ha | 19 ha | 203 ha |
+
+En los seis ardieron 15 530 ha; 1 264 ha eran superficie agrícola del MIDAGRI, pero solo 141 ha eran chacras. La mayor exposición está en Sicuani: 2 670 ha de chacras sin quemar a menos de 1 km de la cicatriz.
+
+\* Río Tambo es selva: las nubes taparon el 56 % de la zona después del fuego (el área quemada es un mínimo), en su recuadro no hay referencias de cultivo y los cultivos arbóreos (cacao, café, plátano) se confunden con árboles.
+
 ## Datos y fechas
 
 | Dato | Fuente | Fechas |
@@ -50,7 +67,7 @@ Reproducir: `uv sync`, luego `uv run python src/01_incendios_cultivo.py` y `uv r
 ## Estructura
 
 ```
-src/                 scripts (1: incendios × SAN 2024; 2: dNBR Curahuasi; 3: raster para la web; 4: cifras nacionales; 5: NDVI de 12 meses y regla de Dinámica Agrícola; 6: cultivo, pasto o árboles con Random Forest)
+src/                 scripts (1: incendios × SAN 2024; 2: dNBR Curahuasi; 3: raster para la web; 4: cifras nacionales; 5: NDVI de 12 meses y regla de Dinámica Agrícola; 6: cultivo, pasto o árboles con Random Forest; 7: los seis incendios)
 data/monitor/        página y datos del tablero web
 data/processed/      incendios.csv, resúmenes JSON (los .gpkg y .tif no se suben)
 outputs/maps/        mapas

@@ -55,6 +55,16 @@
 .cu-metodo dt{color:var(--color-fg);font-weight:var(--cds-font-weight-medium)}
 .cu-metodo dd{margin:0}
 @media (max-width:640px){.cu-metodo dl{grid-template-columns:minmax(0,1fr)}.cu-stat + .cu-stat{border-left:0;padding-left:0;border-top:1px solid var(--color-border-line)}}
+.cu-paralelos{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,15rem),1fr));gap:var(--cds-gap-lg) var(--cds-gap-md);align-items:start}
+.cu-par{display:flex;flex-direction:column;gap:6px;min-width:0}
+.cu-par h3{margin:0;font-size:var(--cds-font-size-body);font-weight:var(--cds-font-weight-medium)}
+.cu-par .sub{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.cu-par .lienzo-par{height:13rem;display:flex;align-items:flex-end;justify-content:flex-start}
+.cu-par canvas{display:block;border-radius:4px;border:1px solid var(--color-border-line);image-rendering:auto;max-width:100%}
+.cu-par dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:0;font-size:var(--cds-font-size-caption);font-variant-numeric:tabular-nums}
+.cu-par dt{color:var(--color-fg-muted)}
+.cu-par dd{margin:0;text-align:right;color:var(--color-fg)}
+.cu-par dd.x{color:var(--cds-chart-status-critical);font-weight:600}
 .cu-mapa{position:relative}
 .cu-tip{position:absolute;pointer-events:none;z-index:2;background:var(--cds-surface-popover);border:1px solid var(--cds-border);border-radius:var(--cds-radius);box-shadow:var(--cds-shadow-popover);padding:var(--cds-pad-xs) var(--cds-pad-sm);font-size:var(--cds-font-size-caption);line-height:1.5;max-width:260px}
 .cu-tip b{display:block}
@@ -64,6 +74,7 @@
 <div class="cu">
   <div class="cu-tabs" role="tablist" aria-label="Páginas">
     <button type="button" role="tab" id="tab-curahuasi" data-pag="curahuasi" aria-selected="true">Curahuasi</button>
+    <button type="button" role="tab" id="tab-comparacion" data-pag="comparacion" aria-selected="false">Seis incendios</button>
     <button type="button" role="tab" id="tab-nacional" data-pag="nacional" aria-selected="false">Contexto nacional</button>
   </div>
 
@@ -140,6 +151,44 @@
       </dl>
     </details>
   </div>
+
+  <div class="cu-pag" id="comparacion" role="tabpanel" aria-labelledby="tab-comparacion" hidden></div>
+  <template id="tpl-comparacion">
+    <header class="cu-head">
+      <p class="cu-eyebrow">Los seis incendios más grandes de octubre 2026 · el mismo método que en Curahuasi</p>
+      <h1 class="cu-title">¿Cuánta superficie agrícola quemó cada incendio?</h1>
+      <p class="cu-lede" id="c-hallazgo" data-source="comparacion">Entre los seis ardieron <b id="c-quem">—</b> ha. De ellas, <b class="x" id="c-agri">—</b> ha eran superficie agrícola del MIDAGRI, pero solo <b id="c-chacras">—</b> ha eran chacras; el resto, árboles o pasto dentro de la máscara agrícola. A menos de 1 km de las cicatrices quedan <b class="x" id="c-1km">—</b> ha de chacras sin quemar.</p>
+    </header>
+    <section class="cu-card" id="g-paralelos" data-source="miniaturas comparacion">
+      <h2>Los seis incendios, a la misma escala</h2>
+      <p class="cu-nota">Cada mapa es el recuadro analizado de un incendio, a 40 m por píxel y con la misma escala para todos. Debajo, sus cifras con dNBR ≥ 0,10.</p>
+      <div class="cu-mini" id="ley-paralelos"></div>
+      <div class="cu-paralelos" id="paralelos"></div>
+    </section>
+    <div class="cu-grid">
+      <section class="cu-card" id="g-c-agri" data-source="comparacion">
+        <h2>Superficie agrícola quemada, por incendio</h2>
+        <p class="cu-nota">Hectáreas de la SAN 2024 dentro del área quemada, divididas según lo que hay realmente.</p>
+        <svg id="svg-c-agri" role="img" aria-label="Superficie agrícola quemada por incendio"></svg>
+        <div class="cu-mini" id="mini-c-agri"></div>
+      </section>
+      <section class="cu-card" id="g-c-1km" data-source="comparacion">
+        <h2>Chacras sin quemar a menos de 1 km</h2>
+        <p class="cu-nota">La primera franja expuesta junto a cada cicatriz.</p>
+        <svg id="svg-c-1km" role="img" aria-label="Chacras sin quemar a menos de 1 km por incendio"></svg>
+      </section>
+    </div>
+    <details class="cu-metodo">
+      <summary>Cómo se hizo la comparación</summary>
+      <dl>
+        <dt>Incendios</dt><dd>Los cinco incendios con mayor huella de octubre 2026 después de Curahuasi (Río Tambo, Sicuani, Coyllurqui, San Pedro de Cachora y Alto Pichigua). Se excluyó La Joya (Arequipa), que es suelo desnudo y probablemente una fuente fija.</dd>
+        <dt>Mismo método</dt><dd>Por incendio: imágenes Sentinel-2 antes y después elegidas por el % de píxeles válidos en la zona, dNBR sembrado con focos VIIRS (umbral 0,10), cruce con la SAN 2024, WorldCover y la distancia a la cicatriz, y NDVI máximo mensual de octubre 2025 a septiembre 2026.</dd>
+        <dt>Chacra, pasto o árboles</dt><dd>El Random Forest de Curahuasi se volvió a entrenar con las referencias de los seis recuadros juntos (en la puna y la selva hay pocas referencias de cultivo) y se validó por bloques de 2 km: exactitud de <span data-source="resumen" data-field="conj_exactitud_pct">—</span> %, cultivo con F1 de <span data-source="resumen" data-field="conj_f1_cultivo_pct">—</span> %. Curahuasi conserva su propio modelo.</dd>
+        <dt>Río Tambo</dt><dd>Es selva: las nubes taparon buena parte de la zona después del fuego (ver su tarjeta), así que su área quemada es un mínimo. En su recuadro no hay referencias de cultivo, y en la selva los cultivos arbóreos (cacao, café, plátano) se confunden con árboles: su división entre chacra y árboles no es confiable.</dd>
+        <dt>Límites</dt><dd>Los recuadros son de distinto tamaño y el anillo de 5 km puede salirse de ellos; las fechas de las imágenes cambian por incendio.</dd>
+      </dl>
+    </details>
+  </template>
 
   <div class="cu-pag" id="nacional" role="tabpanel" aria-labelledby="tab-nacional" hidden></div>
   <template id="tpl-nacional">
@@ -411,12 +460,64 @@
   function abrir(p) {
     st.pag = p;
     document.querySelectorAll(".cu-tabs button").forEach(function (b) { b.setAttribute("aria-selected", b.getAttribute("data-pag") === p ? "true" : "false"); });
-    document.getElementById("curahuasi").hidden = p !== "curahuasi";
-    var nac = document.getElementById("nacional");
-    if (p === "nacional" && !nac.firstElementChild) nac.appendChild(document.getElementById("tpl-nacional").content.cloneNode(true));
-    nac.hidden = p !== "nacional";
+    ["curahuasi", "comparacion", "nacional"].forEach(function (id) {
+      var pg = document.getElementById(id), tpl = document.getElementById("tpl-" + id);
+      if (id === p && tpl && !pg.firstElementChild) pg.appendChild(tpl.content.cloneNode(true));
+      pg.hidden = id !== p;
+    });
     try { dash.setLink(p); } catch (e) {}
     pintar();
+  }
+
+  // ---------- seis incendios en paralelo
+  var PAR = [[236, 234, 228], [205, 210, 216], [150, 196, 105], [232, 163, 23], [95, 80, 72], [242, 143, 59], [215, 38, 61]];
+  var PARN = ["", "Nube o sin dato", "Agrícola sin quemar (pasto o árboles)", "Chacra sin quemar", "Quemado no agrícola", "Agrícola quemada (pasto o árboles)", "Chacra quemada"];
+  function comparar() {
+    var cp = dash.data("comparacion"), mi = dash.data("miniaturas");
+    if (cp.status !== "ok" || !document.getElementById("paralelos")) return;
+    var filas = cp.data.map(function (d) { var o = {}; for (var k in d) o[k] = d[k] === "" || d[k] == null || isNaN(+d[k]) ? d[k] : +d[k]; return o; });
+    var suma = function (k) { return filas.reduce(function (s, f) { return s + (+f[k] || 0); }, 0); };
+    txt("c-quem", es(suma("quemado_ha"))); txt("c-agri", es(suma("agricola_quemada_ha")));
+    txt("c-chacras", es(suma("chacras_quemadas_ha"))); txt("c-1km", es(suma("chacras_1km_ha")));
+    var L = document.getElementById("ley-paralelos");
+    if (!L.firstChild) [6, 5, 4, 3, 2, 1].forEach(function (k) { var s = document.createElement("span"), i = document.createElement("i"); i.style.background = "rgb(" + PAR[k].join(",") + ")"; s.appendChild(i); s.appendChild(document.createTextNode(PARN[k])); L.appendChild(s); });
+
+    var cont = document.getElementById("paralelos"); cont.textContent = "";
+    if (mi.status === "ok") {
+      var minis = {}; mi.data.forEach(function (m) { minis[m.incendio] = m; });
+      var maxKm = Math.max.apply(null, mi.data.map(function (m) { return Math.max(m.ancho, m.alto) * m.pixel_m / 1000; }));
+      var lienzos = [];
+      filas.forEach(function (f, n) {
+        var m = minis[f.incendio]; if (!m) return;
+        var card = document.createElement("article"); card.className = "cu-par"; card.id = "par-" + n;
+        var h = document.createElement("h3"); h.textContent = f.incendio; card.appendChild(h);
+        var sb = document.createElement("span"); sb.className = "sub";
+        sb.textContent = f.departamento + (f.altitud_mediana_m ? " · " + es(f.altitud_mediana_m) + " m" : "") + " · " + f.antes + " → " + f.despues; card.appendChild(sb);
+        var box = document.createElement("div"); box.className = "lienzo-par"; card.appendChild(box);
+        var c = document.createElement("canvas"); c.width = m.ancho; c.height = m.alto; box.appendChild(c);
+        var g = c.getContext("2d"), im = g.createImageData(m.ancho, m.alto), cod = dec(m.codigos);
+        for (var i = 0; i < cod.length; i++) { var col = PAR[cod[i]] || PAR[0]; im.data[i * 4] = col[0]; im.data[i * 4 + 1] = col[1]; im.data[i * 4 + 2] = col[2]; im.data[i * 4 + 3] = 255; }
+        g.putImageData(im, 0, 0);
+        lienzos.push([c, m, box]);
+        var dl = document.createElement("dl");
+        [["Área quemada", es(f.quemado_ha) + " ha", ""], ["Agrícola quemada", es(f.agricola_quemada_ha) + " ha", ""], ["Chacras quemadas", es(f.chacras_quemadas_ha) + " ha", "x"],
+         ["Chacras sin quemar a ≤ 1 km", es(f.chacras_1km_ha) + " ha", "x"], ["Nubes en la zona después del fuego", coma(f.sin_dato_zona_pct, 0) + " %", f.sin_dato_zona_pct > 20 ? "x" : ""]]
+          .forEach(function (r) { var dt = document.createElement("dt"), dd = document.createElement("dd"); dt.textContent = r[0]; dd.textContent = r[1]; if (r[2]) dd.className = r[2]; dl.appendChild(dt); dl.appendChild(dd); });
+        if (f.sin_dato_zona_pct > 20) { var av = document.createElement("span"); av.className = "sub"; av.textContent = "Las nubes taparon parte de la zona: el área quemada es un mínimo."; card.appendChild(dl); card.appendChild(av); cont.appendChild(card); return; }
+        card.appendChild(dl);
+        cont.appendChild(card);
+      });
+      // misma escala para todos: el recuadro más grande ocupa el espacio disponible
+      if (lienzos.length) {
+        var b0 = lienzos[0][2], esc = Math.min(b0.clientWidth, b0.clientHeight) / maxKm;
+        lienzos.forEach(function (x) { x[0].style.width = (x[1].ancho * x[1].pixel_m / 1000 * esc) + "px"; x[0].style.height = (x[1].alto * x[1].pixel_m / 1000 * esc) + "px"; });
+      }
+    }
+    var orden = filas.slice().sort(function (a, b) { return b.agricola_quemada_ha - a.agricola_quemada_ha; });
+    apiladas("svg-c-agri", orden.map(function (f) { return { l: f.incendio, partes: [{ v: f.chacras_quemadas_ha, c: PAR[6] }, { v: f.pasto_quemado_ha, c: [150, 196, 105] }, { v: f.arboles_quemados_ha, c: [30, 110, 60] }] }; }));
+    var mc = document.getElementById("mini-c-agri");
+    if (!mc.firstChild) [["Chacra", PAR[6]], ["Pasto o matorral", [150, 196, 105]], ["Árboles", [30, 110, 60]]].forEach(function (x) { var s = document.createElement("span"), i = document.createElement("i"); i.style.background = "rgb(" + x[1].join(",") + ")"; s.appendChild(i); s.appendChild(document.createTextNode(x[0])); mc.appendChild(s); });
+    barras("svg-c-1km", filas.slice().sort(function (a, b) { return b.chacras_1km_ha - a.chacras_1km_ha; }).map(function (f) { return { l: f.incendio, v: f.chacras_1km_ha, c: PAR[3] }; }));
   }
   document.querySelectorAll(".cu-tabs button").forEach(function (b) { b.addEventListener("click", function () { abrir(b.getAttribute("data-pag")); }); });
 
@@ -501,9 +602,10 @@
         car.hidden = false;
         car.textContent = ra.status === "error" || co.status === "error" ? "No se pudo cargar el raster." : "Cargando 1,1 millones de píxeles…";
       }
-    } else { mapa(); deptos(); }
+    } else if (st.pag === "comparacion") comparar();
+    else { mapa(); deptos(); }
   }
   dash.onData(pintar);
-  try { if (location.hash === "#nacional") abrir("nacional"); } catch (e) {}
+  try { var h0 = location.hash.slice(1); if (h0 === "nacional" || h0 === "comparacion") abrir(h0); } catch (e) {}
 })();
 </script>
