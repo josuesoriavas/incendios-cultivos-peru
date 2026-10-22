@@ -19,7 +19,7 @@ st.caption(f"Focos VIIRS (NASA FIRMS) del {r1['desde_utc']} al {r1['corte_utc']}
            f"Sentinel-2 L2A (Earth Search) · ESA WorldCover 2021")
 
 c = st.columns(4)
-c[0].metric("Focos en cultivo: WorldCover", f"{r1['pct_focos_cultivo_worldcover_monitor']} %", help="Según el monitor del profesor (ESA WorldCover 2021)")
+c[0].metric("Focos en cultivo: WorldCover", f"{r1['pct_focos_cultivo_worldcover_monitor']} %", help="ESA WorldCover 2021, focos de 7 días al 17 oct")
 c[1].metric("Focos en cultivo: MIDAGRI", f"{r1['pct_focos_en_cultivo_san']} %", help="Superficie Agrícola Nacional 2024 (MIDAGRI)")
 c[2].metric("Agrícola a ≤ 5 km del fuego", f"{r1['cultivo_a_5km_activos_ha']:,} ha", help="Alrededor de los incendios activos (focos en 24 h)")
 c[3].metric("Agrícola quemada, Curahuasi", f"{r2['san2024_en_quemado_ha']:,} ha", help="SAN 2024 dentro del área con dNBR ≥ 0,10")
@@ -30,7 +30,7 @@ a.image(str(R / "outputs/maps/curahuasi_dnbr_cultivo.png"))
 b.markdown(f"""
 - **Imágenes:** antes {r2['antes']} ({r2['valido_zona_antes_pct']} % válido en la zona), después {r2['despues']} ({r2['valido_zona_despues_pct']} % válido).
 - **Quemado:** {r2['quemado_dnbr_010_ha']:,} ha con dNBR ≥ 0,10 · {r2['quemado_dnbr_027_ha']:,} ha con dNBR ≥ 0,27 · RBR ≥ 0,10: {r2['quemado_rbr_010_ha']:,} ha.
-- **Monitor del profesor:** {r2['monitor_profesor_ha']:,.0f} ha ({r2['monitor_profesor_fechas']['pre']} → {r2['monitor_profesor_fechas']['post']}).
+- **Medición independiente:** 1,786 ha con dNBR ≥ 0,27 (imágenes del 5 y 17 oct).
 - **Sin dato (nubes) en la zona:** {r2['pct_sin_dato_en_zona']} % · agua excluida: {r2['agua_excluida_ha']} ha.
 """)
 serie = lambda d: pd.Series({k: v for k, v in d.items() if v > 0 and k != "0"}).sort_values(ascending=False)
@@ -49,7 +49,7 @@ with izq:
     st_folium(m, height=520, use_container_width=True)
 der.dataframe(act[["distrito", "departamento", "cultivo_5km_ha", "cultivo_1km_ha", "huella_ha", "prof_cobertura"]]
               .head(20).round(0).rename(columns={"cultivo_5km_ha": "agrícola 5 km (ha)", "cultivo_1km_ha": "agrícola 1 km (ha)",
-                                                 "huella_ha": "huella (ha)", "prof_cobertura": "WorldCover (monitor)"}),
+                                                 "huella_ha": "huella (ha)", "prof_cobertura": "WorldCover"}),
               hide_index=True, height=520)
 st.caption("Huella = píxeles VIIRS de 375 m con fuego; no es área quemada. Un foco de calor no es un incendio. Las nubes esconden el fuego. "
            "SAN 2024 es superficie agrícola (incluye barbecho), no cultivo en pie.")

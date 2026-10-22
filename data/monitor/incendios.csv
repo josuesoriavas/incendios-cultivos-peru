@@ -1,4 +1,4 @@
-incendio,distrito,departamento,estado,lat,lon,focos,focos_24h,huella_ha,cultivo_en_huella_ha,cultivo_1km_ha,cultivo_5km_ha,pct_focos_cultivo,prof_cobertura
+incendio,distrito,departamento,estado,lat,lon,focos,focos_24h,huella_ha,cultivo_en_huella_ha,cultivo_1km_ha,cultivo_5km_ha,pct_focos_cultivo,wc_cobertura
 5,RIO TAMBO,JUNIN,Sin focos 24 h,-11.84,-73.86,295,0,2007.49,63.43,390.43,1954.74,2.37,Bosque
 6,RIO TAMBO,JUNIN,Sin focos 24 h,-11.85,-73.82,41,0,290.72,0.0,0.0,177.42,0.0,Bosque
 7,ANCAHUASI,CUSCO,Sin focos 24 h,-13.41,-72.35,38,0,302.66,0.0,0.29,2457.21,0.0,Pastizal

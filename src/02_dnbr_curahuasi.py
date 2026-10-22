@@ -25,7 +25,7 @@ from rasterio.enums import Resampling
 from rasterio.features import rasterize
 from rasterio.warp import reproject, transform_bounds
 from rasterio.windows import from_bounds
-from scipy.ndimage import binary_dilation, label
+from scipy.ndimage import distance_transform_edt, label
 
 RAIZ = Path(__file__).resolve().parent.parent
 SAL = RAIZ / "data/processed/curahuasi"; SAL.mkdir(parents=True, exist_ok=True)
@@ -130,7 +130,7 @@ res = {
     "worldcover_en_quemado_ha": {WC_NOMBRES.get(int(k), str(k)): ha(quem & (wc == k)) for k in np.unique(wc[quem])},
     "san2024_en_quemado_ha": ha(quem & san_m),
     "san2024_en_quemado_por_worldcover_ha": {WC_NOMBRES.get(int(k), str(k)): ha(quem & san_m & (wc == k)) for k in np.unique(wc[quem & san_m])},
-    "san2024_a_5km_sin_quemar_ha": ha(binary_dilation(quem, iterations=250) & san_m & ~quem),
+    "san2024_a_5km_sin_quemar_ha": ha((distance_transform_edt(~quem) * abs(tr.a) <= 5000) & san_m & ~quem),  # distancia euclidiana
     "monitor_profesor_ha": ev["severidad"]["total_ha"], "monitor_profesor_fechas": ev["sentinel"],
 }
 np.savez_compressed(SAL / "capas_curahuasi.npz", dnbr=dnbr, rbr=rbr, sev=sev, sembrado=ok, zona=zona, sin_dato=sin_dato, agua=agua,
