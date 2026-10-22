@@ -1,0 +1,45 @@
+{
+  "tile": "MGRS-18LYK",
+  "antes": "2026-09-20",
+  "despues": "2026-10-17",
+  "valido_zona_antes_pct": 100,
+  "valido_zona_despues_pct": 97,
+  "pct_sin_dato_en_zona": 6.7,
+  "agua_excluida_ha": 9,
+  "quemado_dnbr_010_ha": 4574,
+  "quemado_dnbr_027_ha": 1677,
+  "quemado_rbr_010_ha": 4502,
+  "solo_a_1km_de_focos_ha": 1126,
+  "severidad_ha": {
+    "Baja": 2897,
+    "Moderada baja": 1462,
+    "Moderada alta": 210,
+    "Alta": 6
+  },
+  "worldcover_en_quemado_ha": {
+    "0": 0,
+    "Bosque": 1205,
+    "Matorral": 248,
+    "Pastizal": 3021,
+    "Cultivo": 14,
+    "Urbano": 11,
+    "Suelo desnudo": 25,
+    "Agua": 51,
+    "Humedal": 0
+  },
+  "san2024_en_quemado_ha": 119,
+  "san2024_en_quemado_por_worldcover_ha": {
+    "Bosque": 32,
+    "Matorral": 2,
+    "Pastizal": 67,
+    "Cultivo": 13,
+    "Urbano": 5,
+    "Suelo desnudo": 0
+  },
+  "san2024_a_5km_sin_quemar_ha": 4083,
+  "monitor_profesor_ha": 2847.0,
+  "monitor_profesor_fechas": {
+    "post": "2026-10-15",
+    "pre": "2026-10-05"
+  }
+}

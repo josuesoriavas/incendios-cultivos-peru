@@ -5,7 +5,8 @@ Descarga sin GEE (reutiliza el método de Clasificacion_palta_sin_GEE): catálog
 de la zona, y por cada fecha candidata se mide el % de píxeles válidos EN LA ZONA según la SCL (no la nubosidad de la escena).
 Índices a 20 m: NBR = (B8A-B12)/(B8A+B12); dNBR = NBR_antes - NBR_después; RBR = dNBR / (NBR_antes + 1.001) (Parks et al. 2014).
 Máscara: SCL (sin dato, saturado, sombra, nube, cirro, agua) y MNDWI = (B3-B11)/(B3+B11) > 0 en cualquiera de las dos fechas.
-Zona: recuadro del incendio E41216 del monitor del profesor; se cuentan solo píxeles a <= 1 km de algún foco VIIRS.
+Zona: recuadro del incendio E41216 del monitor del profesor. dNBR sembrado con focos: cuenta cada mancha continua
+de dNBR >= 0,10 que toque algún píxel a <= 1 km de un foco VIIRS.
 Severidad (Key y Benson 2006): baja 0.10-0.27, moderada baja 0.27-0.44, moderada alta 0.44-0.66, alta >= 0.66.
 
 Uso:  uv run python src/02_dnbr_curahuasi.py
@@ -24,7 +25,7 @@ from rasterio.enums import Resampling
 from rasterio.features import rasterize
 from rasterio.warp import reproject, transform_bounds
 from rasterio.windows import from_bounds
-from scipy.ndimage import binary_dilation
+from scipy.ndimage import binary_dilation, label
 
 RAIZ = Path(__file__).resolve().parent.parent
 SAL = RAIZ / "data/processed/curahuasi"; SAL.mkdir(parents=True, exist_ok=True)
@@ -101,7 +102,11 @@ f_new = gpd.read_file(RAIZ / "data/processed/focos.gpkg", bbox=BBOX).geometry if
 focos = gpd.GeoSeries(list(f_prof) + list(f_new.to_crs(4326)), crs=4326).to_crs(crs)
 zona = rasterize(((p.buffer(1000), 1) for p in focos), out_shape=(H, W), transform=tr, fill=0, dtype="uint8").astype(bool)
 
-ok = zona & ~sin_dato & ~agua
+# dNBR sembrado con focos: se conserva cada mancha continua de dNBR >= 0,10 que toque la zona de algún foco
+valido = ~sin_dato & ~agua
+etq, _ = label(valido & (dnbr >= CORTES[0]))
+sembradas = np.setdiff1d(np.unique(etq[zona]), [0])
+ok = valido & np.isin(etq, sembradas)
 sev = np.zeros((H, W), "uint8")
 for i, c in enumerate(CORTES):
     sev[ok & (dnbr >= c)] = i + 1
@@ -119,7 +124,7 @@ res = {
     "tile": tile, "antes": A[2], "despues": D[2], "valido_zona_antes_pct": round(A[3]), "valido_zona_despues_pct": round(D[3]),
     "pct_sin_dato_en_zona": round(100 * (zona & sin_dato).sum() / zona.sum(), 1), "agua_excluida_ha": ha(zona & agua & ~sin_dato),
     "quemado_dnbr_010_ha": ha(quem), "quemado_dnbr_027_ha": ha(ok & (dnbr >= 0.27)),
-    "quemado_rbr_010_ha": ha(ok & (rbr >= 0.10)),
+    "quemado_rbr_010_ha": ha(ok & (rbr >= 0.10)), "solo_a_1km_de_focos_ha": ha(quem & zona),
     "severidad_ha": {CLASES[i]: ha(sev == i + 1) for i in range(4)},
     "worldcover_en_quemado_ha": {WC_NOMBRES.get(int(k), str(k)): ha(quem & (wc == k)) for k in np.unique(wc[quem])},
     "san2024_en_quemado_ha": ha(quem & san_m),

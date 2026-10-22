@@ -1,0 +1,31 @@
+{
+  "corte_utc": "2026-10-21 19:19",
+  "desde_utc": "2026-10-14",
+  "focos": 9949,
+  "incendios": 2722,
+  "activos": 181,
+  "pct_focos_en_cultivo_san": 22.4,
+  "pct_focos_cultivo_worldcover_monitor": 1,
+  "activos_con_cultivo_en_huella": 116,
+  "cultivo_en_huella_activos_ha": 1284,
+  "cultivo_a_5km_activos_ha": 321378,
+  "prof_cobertura_de_incendios_con_cultivo_san": {
+    "Bosque": 850,
+    "Pastizal": 235,
+    "Cultivo": 29,
+    "Matorral": 26,
+    "Suelo desnudo": 6,
+    "Agua": 4,
+    "Urbano": 1
+  },
+  "por_departamento_cultivo_5km_activos": {
+    "UCAYALI": 79894.0,
+    "MADRE DE DIOS": 39973.0,
+    "JUNIN": 32749.0,
+    "LORETO": 25096.0,
+    "PASCO": 23240.0,
+    "HUANUCO": 16075.0,
+    "ANCASH": 15550.0,
+    "SAN MARTIN": 15191.0
+  }
+}
