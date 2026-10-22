@@ -80,15 +80,16 @@ print(f"elegidas: tile {tile} | antes {A[2]} ({A[3]:.0f}% válido) | después {D
 def bandas(it):
     scl, tr, crs = leer(it.assets["scl"].href)
     f = scl.shape
-    r = {b: leer(it.assets[b].href, forma=f)[0].astype("float32") * 1e-4 for b in ["green", "nir08", "swir16", "swir22"]}
+    r = {b: leer(it.assets[b].href, forma=f)[0].astype("float32") * 1e-4 for b in ["red", "green", "blue", "nir08", "swir16", "swir22"]}
     nbr = (r["nir08"] - r["swir22"]) / (r["nir08"] + r["swir22"])
     mndwi = (r["green"] - r["swir16"]) / (r["green"] + r["swir16"])
     malo = np.isin(scl, SCL_MALOS) | (r["nir08"] == 0)
-    return nbr, mndwi, malo, tr, crs
+    rgb = np.stack([r["red"], r["green"], r["blue"]])  # color real, para el visor web
+    return nbr, mndwi, malo, tr, crs, rgb
 
 
-nbr_a, mw_a, malo_a, tr, crs = bandas(A[4])
-nbr_d, mw_d, malo_d, _, _ = bandas(D[4])
+nbr_a, mw_a, malo_a, tr, crs, rgb_a = bandas(A[4])
+nbr_d, mw_d, malo_d, _, _, rgb_d = bandas(D[4])
 agua = (mw_a > 0) | (mw_d > 0)
 sin_dato = malo_a | malo_d
 dnbr = nbr_a - nbr_d
@@ -132,6 +133,8 @@ res = {
     "san2024_a_5km_sin_quemar_ha": ha(binary_dilation(quem, iterations=250) & san_m & ~quem),
     "monitor_profesor_ha": ev["severidad"]["total_ha"], "monitor_profesor_fechas": ev["sentinel"],
 }
+np.savez_compressed(SAL / "capas_curahuasi.npz", dnbr=dnbr, rbr=rbr, sev=sev, sembrado=ok, zona=zona, sin_dato=sin_dato, agua=agua,
+                    wc=wc, san=san_m, rgb_antes=rgb_a, rgb_despues=rgb_d, transform=np.array(tuple(tr)[:6]), crs=str(crs))
 (SAL / "resumen_curahuasi.json").write_text(json.dumps(res, indent=2, ensure_ascii=False), encoding="utf-8")
 with rasterio.open(SAL / "dnbr_curahuasi.tif", "w", driver="GTiff", height=H, width=W, count=2, dtype="float32", crs=crs, transform=tr, compress="deflate") as d:
     d.write(np.where(sin_dato, np.nan, dnbr), 1); d.write(np.where(sin_dato, np.nan, rbr), 2)
