@@ -9,3 +9,5 @@ data/raw/
 data/processed/*.gpkg
 data/processed/log_*.txt
 data/processed/curahuasi/*.tif
+data/monitor/doc_*.json
+data/monitor/img.js
