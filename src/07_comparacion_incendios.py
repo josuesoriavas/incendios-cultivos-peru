@@ -41,6 +41,7 @@ SAL = RAIZ / "data/processed/comparacion"; SAL.mkdir(parents=True, exist_ok=True
 MON = RAIZ / "data/monitor"
 SAN = r"C:/Users/Josue/Documents/01_MIDAGRI/02_Observatorio_riesgo_inundacion/Proyecto El Niño/Superficie Agrícola/SAN2024.gpkg"
 INCENDIOS = {"E45347": "Río Tambo", "E38662": "Sicuani", "E37866": "Coyllurqui", "E41197": "San Pedro de Cachora", "E39747": "Alto Pichigua"}
+SLUGS = {"E45347": "riotambo", "E38662": "sicuani", "E37866": "coyllurqui", "E41197": "cachora", "E39747": "altopichigua"}
 SCL_MALOS = [0, 1, 3, 6, 8, 9, 10]  # sin dato, saturado, sombra, agua, nubes, cirros
 SCL_NUBES = [0, 1, 3, 8, 9, 10]
 CORTES = [0.10, 0.27, 0.44, 0.66]
@@ -152,6 +153,12 @@ def procesar(eid):
     nbr_a, mw_a, malo_a, tr, crs = bandas(A[2])
     nbr_d, mw_d, malo_d, _, _ = bandas(D[2])
     H, W = nbr_a.shape
+
+    def color(it):  # color real a 40 m para el visor web
+        rgb = np.stack([leer(it.assets[b].href, bbox, (H // 2, W // 2))[0].astype("float32") * 1e-4 for b in ("red", "green", "blue")])
+        return (np.clip(rgb / 0.25, 0, 1) ** 0.8 * 255).astype("uint8")
+
+    rgb_a, rgb_d = color(A[2]), color(D[2])
     sin_dato, agua = malo_a | malo_d, (mw_a > 0) | (mw_d > 0)
     dnbr = np.where(sin_dato, np.nan, nbr_a - nbr_d)
 
@@ -199,6 +206,7 @@ def procesar(eid):
                         zona=zona, san=san, wc=wc, el=el, transform=np.array(tuple(tr)[:6]), crs=str(crs))
     return {"eid": eid, "nombre": INCENDIOS[eid], "departamento": ev.departamento, "tr": tr, "H": H, "W": W, "quem": quem, "q027": q027,
             "sin_dato": sin_dato, "zona": zona, "san": san, "wc": wc, "el": el, "X": X, "ref": referencias(san, wc, X, tr),
+            "agua": agua, "dnbr": dnbr, "rgb_antes": rgb_a, "rgb_despues": rgb_d, "crs": str(crs),
             "antes": A[1].isoformat(), "despues": D[1].isoformat(), "valido_antes": round(A[0]), "valido_despues": round(D[0])}
 
 
@@ -280,6 +288,23 @@ for i, r in enumerate(todos):
 
 tabla = pd.DataFrame(filas)
 tabla.to_csv(MON / "comparacion.csv", index=False)
+
+# --- rasters para el visor web, en el mismo formato que Curahuasi (paso 3): dnbr, flags (zona, agua, SAN), wc y uso a 20 m;
+#     color real antes y después a 40 m
+b64 = lambda a: base64.b64encode(np.ascontiguousarray(a, dtype="uint8").tobytes()).decode()
+for r in res:
+    slug = SLUGS[r["eid"]]
+    tr = r["tr"]
+    sin = r["sin_dato"] | ~np.isfinite(r["dnbr"])
+    q = np.where(sin, 0, np.clip(np.floor((np.nan_to_num(r["dnbr"]) + 0.5) * 100 + 1e-6), 1, 255)).astype("uint8")
+    flags = (r["zona"] * 1 | r["agua"] * 2 | r["san"] * 4).astype("uint8")
+    filas_r = [{"fila": i, "dnbr": b64(q[i]), "flags": b64(flags[i]), "wc": b64(r["wc"][i]), "uso": b64(r["uso"][i])} for i in range(r["H"])]
+    filas_r[0].update(ancho=r["W"], alto=r["H"], pixel_m=float(abs(tr.a)), x0=float(tr.c), y0=float(tr.f), crs=r["crs"])
+    (MON / f"raster_{slug}.json").write_text(json.dumps({"rows": filas_r}), encoding="utf-8")
+    ca, cd = np.moveaxis(r["rgb_antes"], 0, -1), np.moveaxis(r["rgb_despues"], 0, -1)
+    (MON / f"color_{slug}.json").write_text(json.dumps({"rows": [{"fila": i, "antes": b64(ca[i]), "despues": b64(cd[i])} for i in range(ca.shape[0])]}), encoding="utf-8")
+    np.savez_compressed(SAL / f"{r['eid']}_uso.npz", uso=r["uso"])
+    print(f"   web: raster_{slug}.json {(MON / f'raster_{slug}.json').stat().st_size / 1e6:.1f} MB · color_{slug}.json {(MON / f'color_{slug}.json').stat().st_size / 1e6:.1f} MB", flush=True)
 (MON / "miniaturas.json").write_text(json.dumps({"rows": minis}), encoding="utf-8")
 val = {"exactitud": round(accuracy_score(ys, pred), 2), **{c: {m: round(rep[c][m], 2) for m in ("precision", "recall", "f1-score")} for c in CLASES}}
 (SAL / "validacion_conjunta.json").write_text(json.dumps(val, indent=2, ensure_ascii=False), encoding="utf-8")

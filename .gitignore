@@ -17,3 +17,6 @@ data/monitor/color_curahuasi.json
 data/processed/focos_worldcover.csv
 data/processed/curahuasi/*.npy
 data/processed/comparacion/*.npz
+data/monitor/raster_*.json
+data/monitor/color_*.json
+data/monitor/miniaturas.json
