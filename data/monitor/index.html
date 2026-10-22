@@ -20,9 +20,10 @@
 @media (max-width:900px){.mo .visor{grid-template-columns:minmax(0,1fr)}}
 .mo .lienzo{position:relative;border:1px solid var(--color-border-line);border-radius:10px;overflow:hidden;background:#151515;line-height:0}
 .mo .lienzo canvas{width:100%;height:auto;display:block;cursor:crosshair}
-.mo .cargando{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#ddd;font-size:14px;line-height:1.4}
-.mo .lect{position:absolute;left:10px;bottom:10px;background:rgba(15,15,15,.85);color:#f2f2f2;border-radius:8px;padding:7px 10px;font-size:12px;line-height:1.5;pointer-events:none;font-variant-numeric:tabular-nums;max-width:calc(100% - 20px)}
-.mo .escala{position:absolute;right:10px;top:10px;background:rgba(15,15,15,.85);color:#f2f2f2;border-radius:6px;padding:4px 8px;font-size:11px;line-height:1.4}
+.mo [hidden]{display:none!important}
+.mo .cargando{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#ddd;font-size:14px;line-height:1.4;pointer-events:none}
+.mo .lect{position:absolute;left:0;top:0;background:rgba(15,15,15,.88);color:#f2f2f2;border-radius:8px;padding:7px 10px;font-size:12px;line-height:1.5;pointer-events:none;font-variant-numeric:tabular-nums;white-space:pre-line;max-width:240px;z-index:3}
+.mo .escala{position:absolute;right:10px;top:10px;background:rgba(15,15,15,.85);color:#f2f2f2;border-radius:6px;padding:4px 8px;font-size:11px;line-height:1.4;pointer-events:none}
 .mo .panel{display:flex;flex-direction:column;gap:14px;min-width:0}
 .mo .capas{display:flex;flex-direction:column;gap:5px}
 .mo .capas button{font:inherit;font-size:13px;text-align:left;padding:7px 10px;border-radius:8px;border:1px solid var(--color-border-line);background:var(--color-bg);color:var(--color-fg);cursor:pointer}
@@ -118,13 +119,14 @@
     <header style="display:flex;flex-direction:column;gap:6px">
       <h3>Contexto nacional · focos VIIRS del <span data-source="resumen" data-field="desde">—</span> al <span data-source="resumen" data-field="corte_utc">—</span> UTC</h3>
       <h2>Lo que muestra Curahuasi se repite en todo el país</h2>
-      <p class="sub">Cruce de los focos de calor de NASA FIRMS (S-NPP, NOAA-20 y NOAA-21) con la Superficie Agrícola Nacional 2024. Incendio: focos a 1 km o menos y 48 h o menos entre sí; activo si tuvo focos en las últimas 24 h.</p>
+      <p class="sub">Cruce de los focos de calor de NASA FIRMS (S-NPP, NOAA-20 y NOAA-21) con la Superficie Agrícola Nacional 2024. Incendio: focos a 1 km o menos y 48 h o menos entre sí; activo si tuvo focos en las últimas 24 h. WorldCover se lee en el centro de los mismos focos.</p>
     </header>
     <div class="kpis" id="cifras-nacionales">
-      <div class="kpi"><span class="v"><span data-source="resumen" data-field="pct_focos_cultivo_worldcover">—</span> %</span><span class="l">de los focos cae en "Cultivo" según WorldCover 2021 (focos de 7 días al 17 oct)</span></div>
+      <div class="kpi"><span class="v"><span data-source="resumen" data-field="pct_focos_cultivo_worldcover">—</span> %</span><span class="l">de los mismos focos cae en "Cultivo" según WorldCover 2021</span></div>
       <div class="kpi hot"><span class="v"><span data-source="resumen" data-field="pct_focos_agricola_midagri">—</span> %</span><span class="l">de los <span data-source="resumen" data-field="focos">—</span> focos cae en superficie agrícola según el MIDAGRI</span></div>
-      <div class="kpi"><span class="v"><span data-source="resumen" data-field="pct_activos_con_agricola">—</span> %</span><span class="l">de los <span data-source="resumen" data-field="activos">—</span> incendios activos ya arde sobre superficie agrícola</span></div>
-      <div class="kpi hot"><span class="v"><span data-source="resumen" data-field="agricola_5km_activos_ha">—</span> ha</span><span class="l">agrícolas a 5 km o menos de un incendio activo; el <span data-source="resumen" data-field="pct_top3_deps">—</span> % en <span data-source="resumen" data-field="dep1">—</span>, <span data-source="resumen" data-field="dep2">—</span> y <span data-source="resumen" data-field="dep3">—</span></span></div>
+      <div class="kpi"><span class="v"><span data-source="resumen" data-field="pct_focos_agricola_wc_pastizal_bosque">—</span> %</span><span class="l">de los focos en superficie agrícola caen en lo que WorldCover llama bosque o pastizal</span></div>
+      <div class="kpi"><span class="v"><span data-source="resumen" data-field="pct_activos_con_agricola">—</span> %</span><span class="l">de los <span data-source="resumen" data-field="activos">—</span> incendios activos tiene superficie agrícola dentro de su huella (píxeles VIIRS de 375 m)</span></div>
+      <div class="kpi hot"><span class="v"><span data-source="resumen" data-field="agricola_5km_activos_ha">—</span> ha</span><span class="l">agrícolas a 5 km o menos de algún incendio activo, cada hectárea contada una vez; el <span data-source="resumen" data-field="pct_top3_deps">—</span> % en <span data-source="resumen" data-field="dep1">—</span>, <span data-source="resumen" data-field="dep2">—</span> y <span data-source="resumen" data-field="dep3">—</span></span></div>
     </div>
     <div class="mapwrap" id="mapa" data-source="incendios limites"></div>
     <div class="legend"><span><span class="dot" style="background:var(--color-bad)"></span>Incendio activo</span><span><span class="dot" style="background:var(--color-fg-muted)"></span>Sin focos en 24 h (huella mayor a 100 ha)</span><span>Tamaño: hectáreas agrícolas a 5 km o menos. Pasa el cursor para ver el detalle.</span></div>
@@ -300,16 +302,24 @@
     document.querySelectorAll(".k-umbral").forEach(function (x) { x.textContent = coma(st.umbral, 2); });
     clearTimeout(timer); timer = setTimeout(function () { if (st.R) { sembrar(); resumir(); cifras(); dibujar(); } }, 120);
   });
-  cv.addEventListener("mousemove", function (e) {
-    var R = st.R; if (!R) return;
-    var b = cv.getBoundingClientRect(), x = Math.floor((e.clientX - b.left) / b.width * R.W), y = Math.floor((e.clientY - b.top) / b.height * R.H);
-    if (x < 0 || y < 0 || x >= R.W || y >= R.H) return;
-    var i = y * R.W + x, q = R.dnbr[i], Lc = document.getElementById("lect"), dm = Math.sqrt(st.d2[i]) * R.px;
-    Lc.hidden = false;
+  // lectura del píxel bajo el puntero (mouse, lápiz o toque), junto al puntero
+  function leerPixel(e) {
+    var R = st.R, Lc = document.getElementById("lect"); if (!R || !st.quem) return;
+    var b = cv.getBoundingClientRect(); if (!b.width || !b.height) return;
+    var px = e.clientX - b.left, py = e.clientY - b.top, x = Math.floor(px / b.width * R.W), y = Math.floor(py / b.height * R.H);
+    if (x < 0 || y < 0 || x >= R.W || y >= R.H) { Lc.hidden = true; return; }
+    var i = y * R.W + x, q = R.dnbr[i], dm = Math.sqrt(st.d2[i]) * R.px;
     Lc.textContent = (q === 0 ? "Nube o sin dato" : "dNBR " + coma(q / 100 - 0.5, 2) + (st.quem[i] ? " · quemado" : " · a " + es(dm) + " m de la cicatriz")) +
-      " | MIDAGRI: " + (R.flags[i] & 4 ? "agrícola" : "no agrícola") + " | WorldCover: " + ((WC[R.wc[i]] || ["sin clase"])[0]);
-  });
-  cv.addEventListener("mouseleave", function () { document.getElementById("lect").hidden = true; });
+      "\nMIDAGRI: " + (R.flags[i] & 4 ? "superficie agrícola" : "no agrícola") + "\nWorldCover: " + ((WC[R.wc[i]] || ["sin clase"])[0]);
+    Lc.hidden = false;
+    var w = Lc.offsetWidth, h = Lc.offsetHeight, l = px + 14, t = py + 14;
+    if (l + w > b.width - 6) l = px - w - 14;
+    if (t + h > b.height - 6) t = py - h - 14;
+    Lc.style.left = Math.max(6, l) + "px"; Lc.style.top = Math.max(6, t) + "px";
+  }
+  cv.addEventListener("pointermove", leerPixel);
+  cv.addEventListener("pointerdown", leerPixel);
+  cv.addEventListener("pointerleave", function () { document.getElementById("lect").hidden = true; });
 
   // ---------- pestañas
   function abrir(p) {
@@ -354,15 +364,15 @@
       var p = proj([+d.lon, +d.lat]);
       var c = el("circle", { cx: p[0], cy: p[1], r: 2 + (Math.min(W, H) / 22 - 2) * Math.sqrt(+d.cultivo_5km_ha / cmax),
         fill: d.estado === "Activo" ? "var(--color-bad)" : "var(--color-fg-muted)", "fill-opacity": 0.55, stroke: "var(--color-bg)", "stroke-width": 0.6 }, gc);
-      c.addEventListener("mousemove", function (ev) {
+      c.addEventListener("pointermove", function (ev) {
         var b = cont.getBoundingClientRect(), x = ev.clientX - b.left + 12, y = ev.clientY - b.top + 12;
         if (x > b.width - 240) x -= 260;
         tip.hidden = false; tip.style.left = x + "px"; tip.style.top = y + "px"; tip.textContent = "";
         [d.distrito + " (" + d.departamento + ")", d.estado + " · " + d.focos + " focos · huella " + es(d.huella_ha) + " ha",
-         "Agrícola a 1 km: " + es(d.cultivo_1km_ha) + " ha · a 5 km: " + es(d.cultivo_5km_ha) + " ha", "WorldCover: " + d.wc_cobertura]
+         "Agrícola a 1 km: " + es(d.cultivo_1km_ha) + " ha · a 5 km: " + es(d.cultivo_5km_ha) + " ha", "WorldCover (clase más común en sus focos): " + d.wc_cobertura]
           .forEach(function (t, k) { var e = document.createElement(k ? "div" : "b"); e.textContent = t; tip.appendChild(e); });
       });
-      c.addEventListener("mouseleave", function () { tip.hidden = true; });
+      c.addEventListener("pointerleave", function () { tip.hidden = true; });
     });
   }
 

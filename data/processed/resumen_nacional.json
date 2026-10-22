@@ -1,0 +1,29 @@
+{
+  "focos": 9949,
+  "pct_focos_agricola_midagri": 23.2,
+  "pct_focos_cultivo_worldcover": 1.9,
+  "worldcover_de_focos_en_san_pct": {
+    "Bosque": 50.0,
+    "Pastizal": 38.2,
+    "Cultivo": 7.5,
+    "Matorral": 3.5,
+    "Suelo desnudo": 0.5,
+    "Urbano": 0.2,
+    "Humedal": 0.1
+  },
+  "activos": 181,
+  "agricola_huella_activos_ha": 1351,
+  "agricola_1km_activos_ha": 25727,
+  "agricola_5km_activos_ha": 292575,
+  "agricola_5km_suma_por_incendio_ha": 342513,
+  "agricola_5km_por_departamento_ha": {
+    "UCAYALI": 55257.0,
+    "JUNIN": 32088.0,
+    "MADRE DE DIOS": 31413.0,
+    "PASCO": 27649.0,
+    "LORETO": 23087.0,
+    "HUANUCO": 20575.0,
+    "SAN MARTIN": 15191.0,
+    "ANCASH": 14048.0
+  }
+}

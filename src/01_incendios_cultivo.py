@@ -60,9 +60,10 @@ inc = gpd.GeoDataFrame(inc, geometry=huella.reindex(inc.index), crs=UTM)
 inc["huella_ha"] = inc.area / 1e4
 print(f"incendios: {len(inc)} | activos: {inc.activo.sum()} | activos > 100 ha: {(inc.activo & (inc.huella_ha > 100)).sum()}", flush=True)
 
-# --- 4. cruce con SAN 2024 (solo los distritos con focos y sus vecinos, para no leer los 714 MB)
-ids = sorted(gpd.sjoin(dist, inc.to_crs(4326).buffer(0.06).to_frame("geometry"), predicate="intersects").IDDIST.unique())
-san = gpd.read_file(SAN, where=f"IDDIST IN ({','.join(repr(x) for x in ids)})", columns=["IDDIST", "AREA_HA"])
+# --- 4. cruce con SAN 2024 (solo lo que está cerca de algún incendio, para no leer los 714 MB). Se filtra por ubicación,
+# no por código de distrito: 57 distritos de la SAN 2024 tienen códigos que no existen en el límite distrital usado
+zona = inc.to_crs(4326).buffer(0.06).union_all()
+san = gpd.read_file(SAN, mask=zona, columns=["IDDIST", "AREA_HA"])
 print(f"SAN 2024 leída: {len(san)} distritos, {san.AREA_HA.sum():,.0f} ha agrícolas", flush=True)
 san = san.explode(ignore_index=True).to_crs(UTM)  # parcelas sueltas: el índice espacial trabaja con piezas chicas
 san["geometry"] = san.geometry.make_valid()

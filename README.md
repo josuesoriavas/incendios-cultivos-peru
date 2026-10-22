@@ -13,9 +13,9 @@ Tarea de Ciencia de Datos con Python (Prof. Alexander Quispe, Universidad del Pa
 
 ## Tres hallazgos
 
-1. **WorldCover casi no ve la agricultura que arde.** Según el monitor del profesor (WorldCover), solo el **1 %** de los focos de 7 días cae en "Cultivo". Con la Superficie Agrícola Nacional 2024 del MIDAGRI, el **22,4 %** de los 9 949 focos del 14 al 21 de octubre cae en superficie agrícola, unas **22 veces más**. Los incendios que tocan superficie agrícola están clasificados en el monitor sobre todo como "Bosque" (850) y "Pastizal" (235), y solo 29 como "Cultivo".
+1. **WorldCover casi no ve la agricultura que arde.** De los 9 949 focos del 14 al 21 de octubre, el **23,2 %** cae en superficie agrícola según la Superficie Agrícola Nacional 2024 del MIDAGRI, pero solo el **1,9 %** cae en "Cultivo" según WorldCover 2021, leído en el centro de los mismos focos: **12 veces menos**. De los focos en superficie agrícola, WorldCover ve el 50 % como bosque y el 38 % como pastizal.
 2. **Curahuasi: 4 574 ha quemadas (dNBR ≥ 0,10); 1 677 ha con dNBR ≥ 0,27**, cerca de las 1 786 ha del profesor con el mismo umbral (−6 %). Dentro del área quemada hay **119 ha de superficie agrícola**; WorldCover solo marca **14 ha** de "Cultivo" y clasifica la mayoría de esas parcelas como pastizal (67 ha) o bosque (32 ha). El 66 % de lo quemado es pastizal según WorldCover. Casi toda esa superficie agrícola (116 de 119 ha) ardió con severidad baja.
-3. **Lo que se puede quemar:** hay **321 378 ha** de superficie agrícola a ≤ 5 km de los 181 incendios activos (con focos en las últimas 24 h). Los departamentos con más son Ucayali (79 894 ha), Madre de Dios (39 973) y Junín (32 749). En Curahuasi quedan **1 435 ha** agrícolas sin quemar a ≤ 1 km de la cicatriz (12 veces lo quemado) y **4 517 ha** a ≤ 5 km (distancia euclidiana, dentro del recuadro analizado).
+3. **Lo que se puede quemar:** hay **292 575 ha** de superficie agrícola a ≤ 5 km de alguno de los 181 incendios activos (con focos en las últimas 24 h), contando cada hectárea una vez, y 25 727 ha a ≤ 1 km. Los departamentos con más son Ucayali (55 257 ha), Junín (32 088) y Madre de Dios (31 413). El 66 % de los incendios activos (120) tiene superficie agrícola dentro de su huella. En Curahuasi quedan **1 435 ha** agrícolas sin quemar a ≤ 1 km de la cicatriz (12 veces lo quemado) y **4 517 ha** a ≤ 5 km (distancia euclidiana, dentro del recuadro analizado).
 
 ## Datos y fechas
 
@@ -30,7 +30,7 @@ Tarea de Ciencia de Datos con Python (Prof. Alexander Quispe, Universidad del Pa
 
 ## Método
 
-1. **Incendios** (`src/01_incendios_cultivo.py`): focos sin confianza baja y sin los que están a 3 km de los volcanes activos; los focos a ≤ 1 km y ≤ 48 h se unen en un incendio (la misma definición del monitor). Huella = unión de píxeles de 375 m. Se cruza con la SAN 2024: focos dentro, hectáreas en la huella y en anillos de 1 y 5 km.
+1. **Incendios** (`src/01_incendios_cultivo.py`): focos sin confianza baja y sin los que están a 3 km de los volcanes activos; los focos a ≤ 1 km y ≤ 48 h se unen en un incendio (la misma definición del monitor). Huella = unión de píxeles de 375 m. Se cruza con la SAN 2024: focos dentro, hectáreas en la huella y en anillos de 1 y 5 km. La SAN 2024 se lee por ubicación, no por código: 57 de sus distritos tienen códigos que no están en el límite distrital usado. `src/04_cifras_nacionales.py` lee WorldCover en el centro de los mismos focos y mide la superficie agrícola cercana a los incendios activos como unión de anillos.
 2. **Área quemada** (`src/02_dnbr_curahuasi.py`): reutiliza el método de descarga sin GEE de mi proyecto de clasificación de cultivos. Se lee solo la ventana de la zona y se elige cada imagen por el **% de píxeles válidos en la zona según la capa SCL**, no por la nubosidad de la escena. Ejemplo: la escena 18LYL del 17 oct tenía 55 % de nubes, pero 95 % válido en la zona. NBR = (B8A−B12)/(B8A+B12); dNBR y RBR (Parks et al. 2014). Máscara: SCL (nube, sombra, cirro, agua) + MNDWI > 0. **dNBR sembrado con focos:** cuenta cada mancha continua de dNBR ≥ 0,10 que toque la zona a ≤ 1 km de un foco. Severidad según Key y Benson (2006).
 3. **Qué se quemó:** área quemada × WorldCover (moda a 20 m) y × SAN 2024.
 4. **Tablero web** (enlace arriba): visor raster de Curahuasi con capas y umbral de dNBR en vivo; `src/03_raster_web.py` exporta el raster y `data/monitor/index.html` es la página. Versión local: `uv run streamlit run dashboard/app.py`.
@@ -50,7 +50,7 @@ Reproducir: `uv sync`, luego `uv run python src/01_incendios_cultivo.py` y `uv r
 ## Estructura
 
 ```
-src/                 scripts (1: incendios × SAN 2024; 2: dNBR Curahuasi; 3: raster para la web)
+src/                 scripts (1: incendios × SAN 2024; 2: dNBR Curahuasi; 3: raster para la web; 4: cifras nacionales)
 data/monitor/        página y datos del tablero web
 data/processed/      incendios.csv, resúmenes JSON (los .gpkg y .tif no se suben)
 outputs/maps/        mapas

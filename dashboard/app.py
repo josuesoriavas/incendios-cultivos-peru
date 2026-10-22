@@ -12,16 +12,17 @@ P = R / "data/processed"
 st.set_page_config(page_title="Cultivos e incendios · Perú 2026", layout="wide")
 r1 = json.loads((P / "resumen_paso1.json").read_text(encoding="utf-8"))
 r2 = json.loads((P / "curahuasi/resumen_curahuasi.json").read_text(encoding="utf-8"))
-inc = pd.read_csv(P / "incendios.csv", encoding="utf-8-sig")
+rn = json.loads((P / "resumen_nacional.json").read_text(encoding="utf-8"))
+inc = pd.read_csv(R / "data/monitor/incendios.csv")
 
 st.title("¿Qué se quemó y qué se puede quemar? Cultivos frente a los incendios de octubre 2026")
 st.caption(f"Focos VIIRS (NASA FIRMS) del {r1['desde_utc']} al {r1['corte_utc']} UTC · Superficie Agrícola Nacional 2024 (MIDAGRI) · "
            f"Sentinel-2 L2A (Earth Search) · ESA WorldCover 2021")
 
 c = st.columns(4)
-c[0].metric("Focos en cultivo: WorldCover", f"{r1['pct_focos_cultivo_worldcover_monitor']} %", help="ESA WorldCover 2021, focos de 7 días al 17 oct")
-c[1].metric("Focos en cultivo: MIDAGRI", f"{r1['pct_focos_en_cultivo_san']} %", help="Superficie Agrícola Nacional 2024 (MIDAGRI)")
-c[2].metric("Agrícola a ≤ 5 km del fuego", f"{r1['cultivo_a_5km_activos_ha']:,} ha", help="Alrededor de los incendios activos (focos en 24 h)")
+c[0].metric("Focos en cultivo: WorldCover", f"{rn['pct_focos_cultivo_worldcover']} %", help="ESA WorldCover 2021 en el centro de los mismos focos")
+c[1].metric("Focos en cultivo: MIDAGRI", f"{rn['pct_focos_agricola_midagri']} %", help="Superficie Agrícola Nacional 2024 (MIDAGRI)")
+c[2].metric("Agrícola a ≤ 5 km del fuego", f"{rn['agricola_5km_activos_ha']:,} ha", help="Unión de los anillos de 5 km alrededor de los incendios activos: cada hectárea cuenta una vez")
 c[3].metric("Agrícola quemada, Curahuasi", f"{r2['san2024_en_quemado_ha']:,} ha", help="SAN 2024 dentro del área con dNBR ≥ 0,10")
 
 st.subheader("Curahuasi: área quemada (dNBR) sobre la superficie agrícola")
@@ -39,7 +40,7 @@ b.write("**Superficie agrícola (SAN 2024) quemada, según cómo la clasifica Wo
 b.bar_chart(serie(r2["san2024_en_quemado_por_worldcover_ha"]), horizontal=True, color="#5b8c3a")
 
 st.subheader("¿Qué se puede quemar? Incendios activos con más cultivo alrededor")
-act = inc[inc.activo].sort_values("cultivo_5km_ha", ascending=False)
+act = inc[inc.estado == "Activo"].sort_values("cultivo_5km_ha", ascending=False)
 m = folium.Map(location=[-9.5, -75], zoom_start=5, tiles="OpenStreetMap")
 for _, x in act.iterrows():
     folium.CircleMarker([x.lat, x.lon], radius=2 + (x.cultivo_5km_ha ** 0.5) / 12, color="#b4441a", weight=1, fill=True, fill_opacity=0.5,
@@ -47,9 +48,9 @@ for _, x in act.iterrows():
 izq, der = st.columns([3, 2])
 with izq:
     st_folium(m, height=520, use_container_width=True)
-der.dataframe(act[["distrito", "departamento", "cultivo_5km_ha", "cultivo_1km_ha", "huella_ha", "prof_cobertura"]]
+der.dataframe(act[["distrito", "departamento", "cultivo_5km_ha", "cultivo_1km_ha", "huella_ha", "wc_cobertura"]]
               .head(20).round(0).rename(columns={"cultivo_5km_ha": "agrícola 5 km (ha)", "cultivo_1km_ha": "agrícola 1 km (ha)",
-                                                 "huella_ha": "huella (ha)", "prof_cobertura": "WorldCover"}),
+                                                 "huella_ha": "huella (ha)", "wc_cobertura": "WorldCover (clase de sus focos)"}),
               hide_index=True, height=520)
 st.caption("Huella = píxeles VIIRS de 375 m con fuego; no es área quemada. Un foco de calor no es un incendio. Las nubes esconden el fuego. "
            "SAN 2024 es superficie agrícola (incluye barbecho), no cultivo en pie.")
