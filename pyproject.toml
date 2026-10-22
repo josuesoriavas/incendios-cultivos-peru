@@ -1,0 +1,19 @@
+[project]
+name = "incendios-cultivos-peru"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "folium>=0.20.0",
+    "geopandas>=1.2.0",
+    "matplotlib>=3.11.2",
+    "numpy>=2.5.4",
+    "pandas>=3.0.6",
+    "pyproj>=3.8.0",
+    "pystac-client>=0.9.1",
+    "rasterio>=1.5.2",
+    "requests>=2.34.2",
+    "scikit-learn>=1.9.1",
+    "shapely>=2.2.0",
+    "streamlit>=1.66.1",
+    "streamlit-folium>=0.27.4",
+]

@@ -6,3 +6,6 @@ data/raw/
 *.tif
 *.tiff
 .env
+data/processed/*.gpkg
+data/processed/log_*.txt
+data/processed/curahuasi/*.tif
