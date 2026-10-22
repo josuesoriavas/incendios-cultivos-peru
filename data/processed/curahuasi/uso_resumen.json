@@ -1,0 +1,55 @@
+{
+  "referencias": {
+    "cultivo": 4107,
+    "pasto o matorral": 611748,
+    "árboles": 56397
+  },
+  "validacion_espacial": {
+    "exactitud": 0.81,
+    "cultivo": {
+      "precision": 0.86,
+      "recall": 0.73,
+      "f1-score": 0.79
+    },
+    "pasto o matorral": {
+      "precision": 0.78,
+      "recall": 0.89,
+      "f1-score": 0.83
+    },
+    "árboles": {
+      "precision": 0.83,
+      "recall": 0.75,
+      "f1-score": 0.78
+    }
+  },
+  "agricola_en_el_recuadro": {
+    "cultivo": 1386,
+    "pasto o matorral": 2868,
+    "árboles": 846
+  },
+  "agricola_quemada": {
+    "cultivo": 42,
+    "pasto o matorral": 26,
+    "árboles": 52
+  },
+  "agricola_sin_quemar_a_1km": {
+    "cultivo": 353,
+    "pasto o matorral": 822,
+    "árboles": 260
+  },
+  "agricola_sin_quemar_1_a_5km": {
+    "cultivo": 966,
+    "pasto o matorral": 1589,
+    "árboles": 529
+  },
+  "quemada_regla_costa_vs_modelo": {
+    "barbecho -> cultivo": 0,
+    "barbecho -> árboles": 0,
+    "transitorio -> cultivo": 15,
+    "transitorio -> pasto o matorral": 11,
+    "transitorio -> árboles": 14,
+    "permanente -> cultivo": 27,
+    "permanente -> pasto o matorral": 15,
+    "permanente -> árboles": 38
+  }
+}

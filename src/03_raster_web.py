@@ -5,7 +5,7 @@ raster_curahuasi.json (20 m): por fila, tres capas de un byte por píxel
   dnbr  = floor((dNBR + 0.5) * 100), entre 1 y 255; 0 = sin dato (nube, sombra o fuera de la imagen)
   flags = bit 1 zona a <= 1 km de focos · bit 2 agua · bit 4 superficie agrícola SAN 2024
   wc    = clase ESA WorldCover 2021
-  din   = dinámica agrícola de los 12 meses previos (src/05): 0 sin dato, 1 barbecho, 2 transitorio, 3 permanente
+  uso   = qué hay dentro de la superficie agrícola (src/06): 0 fuera o sin dato, 1 cultivo, 2 pasto o matorral, 3 árboles
 color_curahuasi.json (40 m): color real antes y después (R, G, B intercalados), estirado 0-255.
 Uso:  uv run python src/03_raster_web.py
 """
@@ -26,12 +26,12 @@ flags = (z["zona"] * 1 | z["agua"] * 2 | z["san"] * 4).astype("uint8")
 H, W = q.shape
 tr = z["transform"]
 filas = [{"fila": i, "dnbr": b64(q[i]), "flags": b64(flags[i]), "wc": b64(z["wc"][i])} for i in range(H)]
-dyn = RAIZ / "data/processed/curahuasi/dinamica_curahuasi.npz"  # din = 0 sin dato, 1 barbecho, 2 transitorio, 3 permanente
-if dyn.exists():
-    din = np.load(dyn)["din"]
-    assert din.shape == q.shape
+uso_npz = RAIZ / "data/processed/curahuasi/uso_curahuasi.npz"  # paso 6
+if uso_npz.exists():
+    uso = np.load(uso_npz)["uso"]
+    assert uso.shape == q.shape
     for i, f in enumerate(filas):
-        f["din"] = b64(din[i])
+        f["uso"] = b64(uso[i])
 meta = {"ancho": W, "alto": H, "pixel_m": float(tr[0]), "x0": float(tr[2]), "y0": float(tr[5]), "crs": str(z["crs"])}
 (OUT / "raster_curahuasi.json").write_text(json.dumps({"rows": [dict(f, **meta) if i == 0 else f for i, f in enumerate(filas)]}), encoding="utf-8")
 

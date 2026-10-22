@@ -78,14 +78,14 @@
       <div class="cu-stat"><span class="cu-k">Área quemada</span><span class="cu-v"><span id="k-quem">—</span> <small>ha</small></span><span class="cu-n">dNBR ≥ <span class="k-umbral">0,10</span>, sembrado con focos VIIRS</span></div>
       <div class="cu-stat hot"><span class="cu-k">Superficie agrícola quemada</span><span class="cu-v"><span id="k-agri">—</span> <small>ha</small></span><span class="cu-n"><span id="k-agri-pct">—</span> % del área quemada · SAN 2024</span></div>
       <div class="cu-stat"><span class="cu-k">"Cultivo" quemado según WorldCover</span><span class="cu-v"><span id="k-wc">—</span> <small>ha</small></span><span class="cu-n"><span id="k-veces">—</span> veces menos que el MIDAGRI</span></div>
-      <div class="cu-stat hot"><span class="cu-k">Agrícola sin quemar a ≤ 1 km</span><span class="cu-v"><span id="k-1km">—</span> <small>ha</small></span><span class="cu-n">la primera franja expuesta</span></div>
+      <div class="cu-stat hot"><span class="cu-k">Chacras sin quemar a ≤ 1 km</span><span class="cu-v"><span id="k-chacras">—</span> <small>ha</small></span><span class="cu-n">de <span id="k-1km">—</span> ha agrícolas en esa franja</span></div>
     </div>
 
     <section class="cu-card" id="visor" data-source="raster color">
       <div class="cu-toolbar">
         <div class="cu-seg" role="group" aria-label="Capa del visor">
           <button type="button" data-capa="agri" aria-pressed="true">Quemado × agrícola</button>
-          <button type="button" data-capa="din" aria-pressed="false">Dinámica agrícola</button>
+          <button type="button" data-capa="din" aria-pressed="false">Cultivo, pasto o árboles</button>
           <button type="button" data-capa="dist" aria-pressed="false">Distancia a la cicatriz</button>
           <button type="button" data-capa="wc" aria-pressed="false">WorldCover</button>
           <button type="button" data-capa="sev" aria-pressed="false">Severidad</button>
@@ -109,7 +109,7 @@
     <div class="cu-grid">
       <section class="cu-card ancho" id="g-dist" data-source="raster">
         <h2>Superficie agrícola según su distancia a la cicatriz</h2>
-        <p class="cu-nota" id="nota-dist">Hectáreas de la SAN 2024 en cada franja, divididas por su dinámica en los 12 meses previos al fuego.</p>
+        <p class="cu-nota" id="nota-dist">Hectáreas de la SAN 2024 en cada franja, divididas según lo que hay realmente: chacra, pasto o matorral, o árboles.</p>
         <svg id="svg-dist" role="img" aria-label="Barras apiladas por distancia y dinámica"></svg>
         <div class="cu-mini" id="mini-din"></div>
       </section>
@@ -133,7 +133,8 @@
         <dt>Imágenes</dt><dd>Sentinel-2 L2A (Earth Search, tile 18LYK), elegidas por el % de píxeles válidos dentro de la zona según la capa SCL. Previa: <span data-source="resumen" data-field="cur_antes">—</span> (<span data-source="resumen" data-field="cur_valido_antes">—</span> % válido); posterior: <span data-source="resumen" data-field="cur_despues">—</span> (<span data-source="resumen" data-field="cur_valido_despues">—</span> %).</dd>
         <dt>Quemado</dt><dd>NBR = (B8A − B12)/(B8A + B12); dNBR = NBR antes − NBR después. Cuenta cada mancha continua de dNBR ≥ 0,10 que toca un píxel a 1 km o menos de un foco VIIRS; el umbral del visor se aplica dentro de esa mancha. Se excluyen nubes, sombras y agua (SCL y MNDWI).</dd>
         <dt>Superficie agrícola</dt><dd>Superficie Agrícola Nacional 2024 del MIDAGRI, rasterizada a la grilla de 20 m. Incluye tierras en descanso, no solo cultivo en pie.</dd>
-        <dt>Dinámica agrícola</dt><dd>Regla de la app Dinámica Agrícola del MIDAGRI sobre el NDVI máximo mensual de octubre 2025 a septiembre 2026: barbecho si el máximo ≤ 0,3; permanente si el mínimo > 0,3; transitorio en el resto; al menos 3 meses válidos. Aquí "permanente" solo significa siempre verde, no cultivo permanente: lo quemado con esa clase está entre 2 000 y 3 400 m, WorldCover lo ve como pastizal o bosque, y la mitad apenas supera el umbral (NDVI mínimo de 0,35).</dd>
+        <dt>Qué hay dentro de lo agrícola</dt><dd>Random Forest (300 árboles) con el NDVI máximo de cada mes de octubre 2025 a septiembre 2026, su mínimo, máximo y amplitud, el mes del pico, el NDVI de lluvias y de secas, la altitud y la pendiente (Copernicus DEM, 30 m). Se entrenó donde dos fuentes coinciden: cultivo = superficie agrícola del MIDAGRI que WorldCover también llama Cultivo; pasto o matorral y árboles = clases de WorldCover fuera de la superficie agrícola, a más de 200 m; solo píxeles puros (entorno de 3 × 3 de la misma clase). Validación cruzada espacial por bloques de 2 km: exactitud de <span data-source="resumen" data-field="uso_exactitud_pct">—</span> %; cultivo con precisión de <span data-source="resumen" data-field="uso_precision_cultivo_pct">—</span> % y exhaustividad de <span data-source="resumen" data-field="uso_recall_cultivo_pct">—</span> %. Está medida en píxeles puros: en los bordes de parcela es menos segura.</dd>
+        <dt>Por qué no la regla del MIDAGRI</dt><dd>La regla de Dinámica Agrícola (barbecho si el NDVI máximo del año ≤ 0,3; permanente si el mínimo > 0,3; transitorio en el resto) está hecha para la costa, donde lo que no es cultivo es desierto. En este valle el pasto y el matorral no se secan del todo, y la regla llamaba "permanente" a <span data-source="resumen" data-field="regla_perm_quemada_ha">—</span> ha de lo agrícola quemado, sobre todo árboles y pasto.</dd>
         <dt>Distancia</dt><dd>Euclidiana, al píxel quemado más cercano, dentro del recuadro de 24 × 19 km: el anillo de 5 km llega al borde, así que es un mínimo.</dd>
         <dt>Limitaciones</dt><dd>La imagen previa es 16 días anterior al fuego y el secado puede inflar el dNBR bajo; WorldCover es de 2021; las nubes ocultan el <span data-source="resumen" data-field="cur_sin_dato_pct">—</span> % de la zona.</dd>
       </dl>
@@ -180,13 +181,13 @@
     50: ["Urbano", [250, 0, 0]], 60: ["Suelo desnudo", [180, 180, 180]], 70: ["Nieve", [240, 240, 240]], 80: ["Agua", [0, 100, 200]],
     90: ["Humedal", [0, 150, 160]], 95: ["Manglar", [0, 207, 117]], 100: ["Musgo", [250, 230, 160]] };
   var SEVN = ["Baja", "Moderada baja", "Moderada alta", "Alta"], SEV = [[253, 212, 158], [252, 141, 89], [215, 48, 31], [127, 0, 0]], CORTES = [0.27, 0.44, 0.66];
-  var DINN = ["Sin dato", "Barbecho", "Transitorio", "Permanente"], DIN = [[138, 138, 138], [217, 160, 91], [76, 120, 200], [46, 139, 87]], DIN_ORDEN = [3, 2, 1, 0];
-  var DIN_EXPLICA = ["sin dato", "barbecho (nunca verde en el año)", "transitorio (verde solo parte del año)", "permanente: vegetación que no se seca en todo el año, sobre todo pasto, matorral o árboles del fondo del valle"];
+  // qué hay dentro de la superficie agrícola (src/06): 1 cultivo, 2 pasto o matorral, 3 árboles
+  var DINN = ["Sin dato", "Cultivo", "Pasto o matorral", "Árboles"], DIN = [[138, 138, 138], [232, 163, 23], [150, 196, 105], [30, 110, 60]], DIN_ORDEN = [1, 2, 3, 0];
   var ANILLOS = [["Quemada", 0, [215, 38, 61]], ["0–500 m", 500, [255, 95, 30]], ["500 m–1 km", 1000, [255, 150, 40]], ["1–2 km", 2000, [255, 205, 70]], ["2–5 km", 5000, [255, 240, 160]]];
   var RAMPA = [[26, 152, 80], [145, 207, 96], [255, 255, 191], [253, 174, 97], [215, 48, 31], [127, 0, 0]];
   var NOTAS = {
     agri: "Rojo: superficie agrícola del MIDAGRI que se quemó. Naranja: quemado fuera de ella. Verde: superficie agrícola sin quemar.",
-    din: "Superficie agrícola según su NDVI en los 12 meses previos al fuego (regla Dinámica Agrícola del MIDAGRI). Permanente = siempre verde, no necesariamente cultivo. Tono intenso: se quemó.",
+    din: "Qué hay dentro de la superficie agrícola del MIDAGRI: chacra, pasto o matorral, o árboles, según el NDVI de los 12 meses previos, la altitud y la pendiente (Random Forest). Tono intenso: se quemó.",
     dist: "Superficie agrícola coloreada por su distancia euclidiana al píxel quemado más cercano.",
     wc: "Clases de ESA WorldCover 2021; lo quemado se ve brillante. Compárala con la capa Quemado × agrícola.",
     sev: "Severidad del dNBR dentro del área quemada (Key y Benson, 2006).",
@@ -199,9 +200,9 @@
   // ---------- datos del raster
   function dec(s) { var b = atob(s), a = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a; }
   function cargarRaster(rows) {
-    var m = rows[0], W = m.ancho, H = m.alto, n = W * H, conDin = !!m.din;
-    var R = { W: W, H: H, px: m.pixel_m, dnbr: new Uint8Array(n), flags: new Uint8Array(n), wc: new Uint8Array(n), din: conDin ? new Uint8Array(n) : null };
-    rows.forEach(function (r) { var o = r.fila * W; R.dnbr.set(dec(r.dnbr), o); R.flags.set(dec(r.flags), o); R.wc.set(dec(r.wc), o); if (conDin) R.din.set(dec(r.din), o); });
+    var m = rows[0], W = m.ancho, H = m.alto, n = W * H, conUso = !!m.uso;
+    var R = { W: W, H: H, px: m.pixel_m, dnbr: new Uint8Array(n), flags: new Uint8Array(n), wc: new Uint8Array(n), din: conUso ? new Uint8Array(n) : null };
+    rows.forEach(function (r) { var o = r.fila * W; R.dnbr.set(dec(r.dnbr), o); R.flags.set(dec(r.flags), o); R.wc.set(dec(r.wc), o); if (conUso) R.din.set(dec(r.uso), o); });
     return R;
   }
   function cargarColor(rows) {
@@ -279,12 +280,16 @@
     txt("k-wc", es(r.wc)); txt("k-veces", r.wc >= 1 ? coma(r.agri / r.wc, 1) : "—"); txt("k-1km", es(c1));
     txt("l-quem", es(r.quem)); txt("l-agri", es(r.agri)); txt("l-wc", es(r.wc)); txt("l-1km", es(c1));
     var ld = document.getElementById("l-din"); ld.textContent = "";
+    var chacras1 = st.R.din ? r.aniD[1][1] + r.aniD[2][1] : null;
+    txt("k-chacras", chacras1 == null ? "—" : es(chacras1));
     if (st.R.din && r.agri > 0) {
-      var q = r.aniD[0], tot = q[1] + q[2] + q[3], top = [1, 2, 3].sort(function (a, b) { return q[b] - q[a]; })[0];
+      var q = r.aniD[0], tot = q[1] + q[2] + q[3];
       if (tot > 0) {
-        ld.appendChild(document.createTextNode(" Antes del fuego, el "));
-        var b = document.createElement("b"); b.textContent = Math.round(100 * q[top] / tot) + " %"; ld.appendChild(b);
-        ld.appendChild(document.createTextNode(" de esa superficie quemada se comportaba como " + DIN_EXPLICA[top] + "."));
+        ld.appendChild(document.createTextNode(q[1] / tot < 0.5 ? " Pero al ver qué había dentro, solo " : " Al ver qué había dentro, "));
+        var b = document.createElement("b"); b.textContent = es(q[1]) + " ha"; ld.appendChild(b);
+        ld.appendChild(document.createTextNode(" de lo quemado eran chacras; el resto, árboles (" + es(q[3]) + " ha) o pasto y matorral (" + es(q[2]) + " ha). A menos de 1 km quedan "));
+        var c = document.createElement("b"); c.className = "x"; c.textContent = es(chacras1) + " ha"; ld.appendChild(c);
+        ld.appendChild(document.createTextNode(" de chacras sin quemar."));
       }
     }
     apiladas("svg-dist", ANILLOS.map(function (a, k) {

@@ -72,6 +72,7 @@ with ThreadPoolExecutor(8) as ex:
         print(f"  {dia}: {100 * np.isfinite(v).mean():.0f} % válido", flush=True)
 
 cubo = np.stack([meses[m] for m in sorted(meses)])
+np.savez_compressed(SAL / "ndvi_mensual_curahuasi.npz", cubo=cubo.astype("float16"), meses=np.array(sorted(meses)))  # para el paso 6
 n = np.isfinite(cubo).sum(0)
 with np.errstate(invalid="ignore"), np.testing.suppress_warnings() as sup:
     sup.filter(RuntimeWarning)
